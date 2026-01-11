@@ -21,6 +21,11 @@
     <!-- Wir laden: 'Courier Prime' (Code-Schrift), 'Inter' (Leseschrift), 'Press Start 2P' (Retro-Gaming Schrift) -->
     <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;500;600;800&family=Press+Start+2P&display=swap" rel="stylesheet">
     
+    <!-- 
+    🖼️ FAVICON 
+    Das kleine Icon oben im Browser-Tab.
+    -->
+    <link rel="icon" type="image/png" href="assets/favicon.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <style type="text/tailwindcss">
@@ -32,16 +37,28 @@
         =======================================================================
         */
         @theme {
-            /* Neon-Farben für das Cyberpunk-Feeling */
-            --color-neon-blue: #00FFFF;    /* Das klassische "Tron"-Blau */
-            --color-neon-dark: #0077FF;    /* Ein dunkleres Blau für Tiefe */
-            --color-neon-purple: #bd00ff;  /* Knalliges Lila für Akzente */
-            --color-bg-dark: var(--bg-main);      /* Dynamic background linked to theme */
+            /* 
+            ZUKUNFTS-NOTE #1: Farben
+            Warum definieren wir die hier? 
+            Damit wir sie an EINE Stelle ändern müssen, wenn wir statt "Blau" plötzlich "Pink" wollen.
             
-            /* Schriftarten-Zuweisung */
-            --font-display: 'Press Start 2P', cursive;  /* Für Überschriften (Pixel-Look) */
-            --font-mono: 'Courier Prime', monospace;    /* Für Code-Texte & Daten */
-            --font-body: 'Inter', sans-serif;           /* Für normalen Fließtext (gut lesbar) */
+            --color-neon-blue: Die Hauptfarbe (Konturen, Links).
+            --color-neon-dark: Für Schattierungen.
+            --color-bg-dark: Zeigt auf die CSS-Variable --bg-main (siehe unten), damit der Theme-Switch (Hell/Dunkel) klappt.
+            */
+            --color-neon-blue: #00FFFF;
+            --color-neon-dark: #0077FF;
+            --color-neon-purple: #bd00ff;
+            --color-bg-dark: var(--bg-main);
+            
+            /* 
+            ZUKUNFTS-NOTE #2: Schriften
+            Wir nutzen 'Press Start 2P' für diesen "Game Over" Look.
+            'Inter' ist für lange Texte, damit die Augen nicht bluten.
+            */
+            --font-display: 'Press Start 2P', cursive;
+            --font-mono: 'Courier Prime', monospace;
+            --font-body: 'Inter', sans-serif;
         }
 
         /* 
@@ -621,10 +638,14 @@
     -->
     <script>
         /** 
-         * 🎮 SPIELE-DATEN
-         * Hier definieren wir, welche Spiele in der 'Hall of Fame' angezeigt werden.
-         * 'id' ist die Steam-App-ID (findest du auf der Steam Store Seite in der URL).
-         * 'name' ist der Titel des Spiels.
+         * 🎮 SPIELE-DATENBANK
+         * =========================================
+         * ZUKUNFTS-NOTE #3: Liste der Spiele
+         * Willst du ein neues Spiel hinzufügen?
+         * 1. Kopiere eine Zeile (z.B. { id: ..., name: ... }).
+         * 2. Suche die STEAM-ID: Gehe auf die Shop-Seite des Spiels. Die ID ist in der URL.
+         *    Bsp: store.steampowered.com/app/12345/Spielname -> ID ist 12345.
+         * 3. Füge es hier ein. Das Bild holt sich das Skript automatisch von den Steam-Servern.
          */
         const games = [
             { id: 427520, name: "Factorio" },
@@ -643,13 +664,15 @@
 
         const gamesGrid = document.getElementById('games-grid');
 
-        // Wir gehen durch jedes Spiel in der Liste und erstellen eine Karte
+        // ZUKUNFTS-NOTE #4: Render-Loop
+        // Dieser Code baut für jedes Spiel in der Liste (oben) eine HTML-Kachel.
+        // Das ist besser als 20x denselben HTML-Code zu kopieren (DRY Prinzip: Don't Repeat Yourself).
         games.forEach(game => {
             const card = document.createElement('div');
-            // Basis-Klassen für die Karte
+            // Basis-Klassen: 'tilt-card' aktiviert unsere 3D-Kipp-Logik (siehe unten)
             card.className = "tilt-card relative h-48 rounded-xl cursor-pointer group"; 
             
-            // Wir bauen die URL zum Steam-Bild zusammen
+            // Magic URL: Steam hostet die Bilder für alle Spiele öffentlich.
             const imgUrl = `https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/${game.id}/header.jpg`;
             
             // Der HTML-Inhalt jeder Karte
@@ -699,34 +722,102 @@
              e.currentTarget.style.transform = `perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)`;
         }
 
-        // 🎵 WIDGET LOGIK (Das kleine Fenster unten rechts)
-        // Was soll da angezeigt werden?
-        const widgetContent = [
-            { type: "Listening to", text: "Carpenter Brut - Turbo Killer" },
-            { type: "Watching", text: "Severance (S2E1)" },
-            { type: "Listening to", text: "The Midnight - Los Angeles" },
-            { type: "Playing", text: "Space Engineers" },
-            { type: "Listening to", text: "Gunship - Tech Noir" },
-            { type: "Watching", text: "For All Mankind" }
-        ];
+        // 🎵 LIVE MUSIK WIDGET (LAST.FM API)
+        // ====================================================================
+        // ZUKUNFTS-DU: Wenn das nicht geht, ist wahrscheinlich der API Key abgelaufen 
+        // oder Last.fm hat die API geändert. Checke: https://www.last.fm/api
+        // ====================================================================
         
-        let widgetIndex = 0;
+        // DEIN API KEY (Hier einfügen!)
+        // Wenn leer, wird der Demo-Modus unten genutzt.
+        const LASTFM_API_KEY = 'YOUR_API_KEY_HERE'; 
+        const LASTFM_USER = 'spezialzt'; // Dein Username auf Last.fm
+
         const wLabel = document.getElementById('widget-label');
         const wText = document.getElementById('widget-content');
 
-        // Alle 5 Sekunden (5000ms) den Inhalt wechseln
-        setInterval(() => {
-            widgetIndex = (widgetIndex + 1) % widgetContent.length;
-            const item = widgetContent[widgetIndex];
-            
-            wLabel.innerText = item.type;
-            wText.innerText = item.text;
-            
-            // Kurz pulsieren lassen beim Wechsel
-            wText.classList.add('animate-pulse');
-            setTimeout(() => wText.classList.remove('animate-pulse'), 500);
-            
-        }, 5000);
+        // FALLBACK DATEN (Demo-Modus)
+        // Das zeigen wir an, wenn kein API Key da ist oder das Internet weg ist.
+        const demoTracks = [
+            { artist: "Carpenter Brut", track: "Turbo Killer" },
+            { artist: "The Midnight", track: "Los Angeles" },
+            { artist: "Gunship", track: "Tech Noir" },
+            { artist: "Perturbator", track: "Future Club" }
+        ];
+
+        let demoIndex = 0;
+
+        /**
+         * Holt den aktuell gespielten Song von Last.fm
+         */
+        async function fetchNowPlaying() {
+            // Schritt 1: Haben wir überhaupt einen Key?
+            if (!LASTFM_API_KEY || LASTFM_API_KEY === 'YOUR_API_KEY_HERE') {
+                console.warn('⚠️ Kein Last.fm API Key gefunden. Starte Demo-Modus.');
+                startDemoMode();
+                return;
+            }
+
+            try {
+                // Schritt 2: Die Anfrage an Last.fm senden
+                // Wir nutzen die Methode 'user.getrecenttracks', da 'user.getnowplaying' veraltet/unzuverlässig ist.
+                // limit=1 heißt: Gib mir nur den allerletzten Song.
+                const url = `https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${LASTFM_USER}&api_key=${LASTFM_API_KEY}&format=json&limit=1`;
+                
+                const response = await fetch(url);
+                const data = await response.json();
+
+                // Schritt 3: Daten prüfen
+                const track = data.recenttracks.track[0];
+                
+                if (!track) throw new Error("Keine Tracks gefunden");
+
+                // Check: Spielt der Song gerade?
+                // Last.fm markiert den aktuellen Song mit dem Attribut "@attr": { "nowplaying": "true" }
+                const isNowPlaying = track['@attr'] && track['@attr'].nowplaying === 'true';
+                
+                // Schritt 4: UI Update
+                updateWidgetUI(isNowPlaying ? 'Now Playing' : 'Last Played', `${track.artist['#text']} - ${track.name}`);
+
+            } catch (error) {
+                console.error('Fehler beim Laden von Last.fm:', error);
+                // Bei Fehler einfach den letzten bekannten Song stehen lassen oder Demo starten
+                if(wText.innerText === 'Loading...') startDemoMode();
+            }
+        }
+
+        /**
+         * Updated das Widget unten rechts
+         */
+        function updateWidgetUI(label, text) {
+            // Nur updaten wenn sich was geändert hat, um Flackern zu vermeiden
+            if (wText.innerText !== text) {
+                wLabel.innerText = label;
+                wText.innerText = text;
+                
+                // Kurzes Aufleuchten (Puls) für Feedback
+                wText.classList.remove('animate-pulse');
+                void wText.offsetWidth; // Trigger Reflow (Trick um Animation neu zu starten)
+                wText.classList.add('animate-pulse');
+            }
+        }
+
+        /**
+         * Der Demo-Modus (falls API kaputt)
+         * Wechselt alle 5 Sekunden durch die Demo-Tracks
+         */
+        function startDemoMode() {
+             // Intervall starten
+             setInterval(() => {
+                const song = demoTracks[demoIndex];
+                updateWidgetUI("On Rotation", `${song.artist} - ${song.track}`);
+                demoIndex = (demoIndex + 1) % demoTracks.length;
+             }, 5000);
+        }
+
+        // Init: Einmal sofort laden, dann alle 15 Sekunden aktualisieren
+        fetchNowPlaying();
+        setInterval(fetchNowPlaying, 15000); // 15000ms = 15 Sekunden (API Limit Fairness)
 
         // 🪟 MODAL LOGIK (Fenster auf/zu machen)
         window.toggleModal = function(id) {
