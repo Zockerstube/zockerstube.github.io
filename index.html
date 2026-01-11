@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="de" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Die Zockerstube | Mr.Riös</title>
+    
+    <!-- 
+    =======================================================================
+    🛠️ TECHNIK-ECK (LIBRARIES)
+    Hier laden wir externe Werkzeuge, die uns Arbeit abnehmen.
+    =======================================================================
+    1. Tailwind CSS: Ein Werkzeugkoffer für Design (macht Styling einfach).
+    2. Google Fonts: Schicke Schriftarten aus dem Internet.
+    3. FontAwesome: Die Bibliothek für die ganzen Icons (Twitch, Steam Logos etc.).
+    -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Wir laden: 'Courier Prime' (Code-Schrift), 'Inter' (Leseschrift), 'Press Start 2P' (Retro-Gaming Schrift) -->
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;500;600;800&family=Press+Start+2P&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <style type="text/tailwindcss">
+        /* 
+        =======================================================================
+        🎨 DESIGN-ZENTRALE (CSS VARIABLEN)
+        Hier definieren wir die Farben und Schriften der Seite zentral.
+        Ändere hier einen Wert, und er ändert sich ÜBERALL auf der Seite.
+        =======================================================================
+        */
+        @theme {
+            /* Neon-Farben für das Cyberpunk-Feeling */
+            --color-neon-blue: #00FFFF;    /* Das klassische "Tron"-Blau */
+            --color-neon-dark: #0077FF;    /* Ein dunkleres Blau für Tiefe */
+            --color-neon-purple: #bd00ff;  /* Knalliges Lila für Akzente */
+            --color-bg-dark: var(--bg-main);      /* Dynamic background linked to theme */
+            
+            /* Schriftarten-Zuweisung */
+            --font-display: 'Press Start 2P', cursive;  /* Für Überschriften (Pixel-Look) */
+            --font-mono: 'Courier Prime', monospace;    /* Für Code-Texte & Daten */
+            --font-body: 'Inter', sans-serif;           /* Für normalen Fließtext (gut lesbar) */
+        }
+
+        /* 
+        ⚡ GLITCH-EFFEKT ANIMATION
+        Sorgt dafür, dass Text kurz "wackelt" (wie bei einem Fehler in der Matrix).
+        */
+        @keyframes glitch {
+            0% { transform: translate(0) }
+            20% { transform: translate(-2px, 2px) }
+            40% { transform: translate(-2px, -2px) }
+            60% { transform: translate(2px, 2px) }
+            80% { transform: translate(2px, -2px) }
+            100% { transform: translate(0) }
+        }
+
+        /* 
+        🌊 Gitter-Bewegung
+        Lässt das Hintergrund-Gitter unendlich nach unten "fahren".
+        */
+        @keyframes grid-move {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 40px; }
+        }
+
+        /*
+        🌐 RETRO-GRID (Der 80er Jahre Boden)
+        */
+        .retro-grid {
+            /* Erstellt ein kariertes Muster mit Farbverläufen */
+            /* HIER habe ich die Sichtbarkeit erhöht (0.25 statt 0.1) */
+            background-image: 
+                linear-gradient(rgba(0, 255, 255, 0.25) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 255, 0.25) 1px, transparent 1px);
+            background-size: 40px 40px; /* Größe der Kästchen */
+            perspective: 500px;         /* 3D-Perspektive */
+            transform-style: preserve-3d;
+            animation: grid-move 2s linear infinite; /* Die Endlos-Fahrt */
+        }
+
+        /* Klasse für Elemente, die beim Drüberfahren "glitchen" sollen */
+        .glitch-hover:hover {
+            animation: glitch 0.3s cubic-bezier(.25, .46, .45, .94) both infinite;
+            color: var(--color-neon-blue);
+            text-shadow: 2px 2px var(--color-neon-purple); /* Lila Schatten im Glitch */
+        }
+
+        /*
+        🪟 GLAS-PANEELE
+        Der Look für die "Karten" auf der Seite (halbtransparent, unscharfer Hintergrund).
+        */
+        .glass-panel {
+            @apply bg-zinc-900/60 backdrop-blur-md border border-zinc-800 shadow-xl;
+        }
+        
+        /* 
+        🧊 3D KARTEN EFFEKT (CSS Teil)
+        Die Logik für das Kippen der Karten.
+        */
+        .tilt-card {
+            transform-style: preserve-3d;
+            transition: transform 0.1s cubic-bezier(0.03, 0.98, 0.52, 0.99); /* Sehr weiche Bewegung */
+            will-change: transform; /* Sagt dem Browser: "Achtung, das bewegt sich gleich!" */
+        }
+        
+        .tilt-inner {
+            transform: translateZ(20px); /* Hebt den Inhalt leicht aus der Karte heraus (3D Tiefe) */
+            backface-visibility: hidden; /* Verhindert Darstellungsfehler beim Drehen */
+        }
+
+        /* 
+        🖱️ SCROLLBAR (Der Balken rechts) 
+        Wir machen ihn dunkel und stylisch.
+        */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #09090b; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #3f3f46; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #0077FF; /* Leuchtet Blau beim Anfassen */
+        }
+
+        /* 🎉 KONAMI CONFETTI */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background-color: #f00;
+            animation: fall linear forwards;
+            z-index: 9999;
+            pointer-events: none; /* Klicks gehen durch das Konfetti durch */
+        }
+        @keyframes fall {
+            to { transform: translateY(100vh) rotate(720deg); } /* Fällt nach unten und dreht sich */
+        }
+
+        /* 📊 AUDIO VISUALIZER (Die zappelnden Balken im Widget) */
+        .bar {
+            width: 4px;
+            background: #00FFFF;
+            animation: equalize 1s infinite; /* Die Zappel-Animation */
+        }
+        /* Jeder Balken ist etwas versetzt, damit es zufällig aussieht */
+        .bar:nth-child(1) { animation-delay: -0.2s; }
+        .bar:nth-child(2) { animation-delay: -0.4s; }
+        .bar:nth-child(3) { animation-delay: -0.6s; }
+        .bar:nth-child(4) { animation-delay: -0.8s; }
+        
+        @keyframes equalize {
+            0% { height: 5px; }
+            50% { height: 15px; } /* Geht hoch */
+            100% { height: 5px; }
+        }
+
+        /* 
+        🎨 MARKEN-FARBEN (Social Media) 
+        Spezifische Farben für Twitch (Lila), Steam (Blau) usw.
+        */
+        .bg-twitch { background-color: #9146FF; color: white; }
+        .bg-steam { background-color: #1b2838; color: white; }
+        .bg-lastfm { background-color: #ba0000; color: white; }
+        .bg-trakt { background-color: #ED1C24; color: white; }
+        .bg-youtube { background-color: #FF0000; color: white; }
+        .bg-discord { background-color: #5865F2; color: white; }
+    </style>
+    <style type="text/tailwindcss">
+        /* 
+        🌓 THEME ENGINE 
+        Wir definieren Farben als CSS-Variablen, damit wir sie umschalten können (Hell/Dunkel).
+        */
+        :root {
+            /* STANDARD (DARK MODE) */
+            --bg-main: #050505;
+            --text-main: #e2e8f0; /* slate-200 */
+            --glass-bg: rgba(24, 24, 27, 0.6); /* zinc-900/60 */
+            --glass-border: #27272a; /* zinc-800 */
+        }
+
+        :root.light-mode {
+            /* LIGHT MODE */
+            --bg-main: #f0fdfa; /* Sehr helles Cyan/Weiß */
+            --text-main: #0f172a; /* slate-900 */
+            --glass-bg: rgba(255, 255, 255, 0.75);
+            --glass-border: #e2e8f0; /* slate-200 */
+            
+            /* Wir überschreiben auch die Neon-Farben für bessere Lesbarkeit auf Hell */
+            --color-bg-dark: #f0fdfa; 
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            transition: background-color 0.5s ease, color 0.5s ease;
+        }
+
+        /* Update für Glass-Panel damit es dynamisch ist */
+        .glass-panel {
+            background-color: var(--glass-bg) !important;
+            border-color: var(--glass-border) !important;
+        }
+        
+        /* Toggle Styling */
+        .theme-btn {
+            @apply p-2 rounded-full transition-all duration-300 relative overflow-hidden;
+        }
+        .theme-btn.active {
+            @apply text-neon-blue bg-white/10 shadow-[0_0_15px_rgba(0,255,255,0.3)];
+        }
+        
+        /* Retro Grid Anpassung für Light Mode */
+        html.light-mode .retro-grid {
+             background-image: 
+                linear-gradient(rgba(0, 119, 255, 0.15) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 119, 255, 0.15) 1px, transparent 1px);
+        }
+    </style>
+</head>
+<body class="font-body overflow-x-hidden selection:bg-neon-blue selection:text-black min-h-screen flex flex-col">
+
+    <!-- 
+    =======================================================================
+    🌌 HINTERGRUND-EBENE
+    Alles was hier drin ist, liegt HINTER dem Text.
+    =======================================================================
+    -->
+    <div class="fixed inset-0 pointer-events-none z-0">
+        <!-- 
+            Das Gitter. 
+            opacity-50: 50% Deckkraft (gut sichtbar).
+            scale-150: Etwas vergrößert.
+            rotate-x-12: Leicht nach hinten gekippt für Tiefe.
+        -->
+        <div class="absolute inset-0 retro-grid opacity-50 transform scale-150 origin-top rotate-x-12"></div>
+        
+        <!-- Ein sanfter schwarzer Verlauf von oben nach unten, damit das Gitter in der Ferne verschwindet -->
+        <div class="absolute inset-0 bg-gradient-to-b from-transparent via-bg-dark/80 to-bg-dark z-0"></div>
+        
+        <!-- 💡 SPOTLIGHT: Die Taschenlampe am Mauszeiger -->
+        <div id="spotlight" class="absolute inset-0 z-0 bg-[radial-gradient(circle_at_var(--x,_50%)_var(--y,_50%),rgba(0,255,255,0.15)_0%,transparent_50%)] opacity-0 transition-opacity duration-500"></div>
+        
+        <!-- Scanlines: Die alten TV-Streifen für Retro-Feeling -->
+        <div class="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_4px,3px_100%] opacity-20 z-10 w-full h-full pointer-events-none"></div>
+    </div>
+
+    <!-- 
+    =======================================================================
+    📦 HAUPT-INHALT
+    Hier beginnt der eigentliche Inhalt der Seite.
+    =======================================================================
+    -->
+    <main class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-24 flex-grow">
+
+        <!-- HEADER: Profilbild & Titel -->
+        <section class="flex flex-col items-center text-center space-y-8 tracking-wide pt-12">
+            <div class="relative group cursor-pointer">
+                <!-- Avatar Glühen (Pulsierend) -->
+                <div class="absolute -inset-1 rounded-full bg-gradient-to-r from-neon-blue to-neon-purple opacity-75 blur-lg group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-pulse"></div>
+                <!-- Das eigentliche Bild (wird von UI Avatars generiert, bis du ein echtes hast) -->
+                <img src="https://ui-avatars.com/api/?name=Mr+Ri%C3%B6s&background=09090b&color=00FFFF&size=256&font-size=0.3" alt="Mr.Riös" class="relative w-32 h-32 md:w-48 md:h-48 rounded-full border-2 border-slate-800 object-cover transform transition duration-500 hover:rotate-6 hover:scale-105 shadow-2xl">
+            </div>
+
+            <div class="space-y-4">
+                <!-- Der Titel mit Glitch-Effekt beim Drüberfahren -->
+                <h1 class="text-4xl md:text-6xl font-display text-white glitch-hover cursor-default" data-text="Die Zockerstube">Die Zockerstube</h1>
+                <p class="text-neon-blue font-mono text-lg md:text-xl tracking-widest uppercase">&lt; Home of StelltDichAchtung /&gt;</p>
+            </div>
+            
+            <!-- Die kleinen Link-Buttons oben -->
+            <div class="flex flex-wrap justify-center gap-4 text-sm font-mono">
+               <a href="https://www.twitch.tv/stelltdichachtung/about" target="_blank" class="px-6 py-2 glass-panel rounded-full transition-all duration-300 border-transparent hover-twitch flex items-center gap-2">
+                   <i class="fa-brands fa-twitch"></i> Twitch
+               </a>
+               <a href="https://steamcommunity.com/id/mr-rioes/" target="_blank" class="px-6 py-2 glass-panel rounded-full transition-all duration-300 border-transparent hover-steam flex items-center gap-2">
+                   <i class="fa-brands fa-steam"></i> Steam
+               </a>
+               <a href="https://app.trakt.tv/profile/spezialzt" target="_blank" class="px-6 py-2 glass-panel rounded-full transition-all duration-300 border-transparent hover-trakt flex items-center gap-2">
+                   <i class="fa-solid fa-tv"></i> Trakt
+               </a>
+               <a href="https://www.last.fm/de/user/spezialzt" target="_blank" class="px-6 py-2 glass-panel rounded-full transition-all duration-300 border-transparent hover-lastfm flex items-center gap-2">
+                   <i class="fa-brands fa-lastfm"></i> Last.fm
+               </a>
+            </div>
+        </section>
+
+        <!-- ÜBER MICH & STATISTIKEN -->
+        <section class="glass-panel p-8 md:p-12 rounded-2xl relative overflow-hidden group border-t-2 border-t-neon-blue/30">
+            <!-- Hintergrund Icon (Deko) -->
+            <div class="absolute top-0 right-0 p-4 opacity-20 text-6xl text-neon-blue">
+                <i class="fa-solid fa-user-astronaut"></i>
+            </div>
+            
+            <h2 class="text-3xl font-bold font-header text-neon-blue mb-8 flex items-center gap-3">
+                <i class="fa-solid fa-terminal text-sm animate-pulse"></i>
+                ABOUT_ME.exe
+            </h2>
+
+            <div class="prose prose-invert max-w-none text-slate-300 font-mono leading-relaxed space-y-4">
+                <p>
+                    <span class="text-neon-blue">>></span> <strong class="text-white">Servus!</strong> Ich bin Tobias, Baujahr '86.
+                    Level 101 Steam Veteran & Achievement Hunter mit einer <strong class="text-neon-purple">97% Completion Rate</strong>.
+                </p>
+                <p>
+                    Wenn ich nicht gerade versuche, meine Fabriken in <em class="text-neon-purple">Factorio</em> zu optimieren oder in <em class="text-neon-purple">Helldivers II</em> Freedom & Managed Democracy zu verteilen, kuratiere ich meine Musikbibliothek, die von <strong class="text-white">Frank Sinatra</strong> bis <strong class="text-white">The Knife</strong> reicht (scrobbling seit '06).
+                </p>
+                <p>
+                    <i class="fa-solid fa-bolt text-yellow-500"></i> Powered by caffeine, code, and retro-futurism.
+                </p>
+            </div>
+
+            <!-- Stats Grid (Die XP-Leiste) -->
+            <div class="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
+                <!-- Einzelne Statistik-Boxen -->
+                <div class="bg-black/40 p-3 rounded border border-zinc-800 flex flex-col items-center justify-center hover:border-neon-blue transition duration-300">
+                    <span class="text-xs text-slate-500 uppercase tracking-wider">Level</span>
+                    <span class="text-2xl font-bold text-white text-shadow-neon">101</span>
+                </div>
+                 <div class="bg-black/40 p-3 rounded border border-zinc-800 flex flex-col items-center justify-center hover:border-neon-purple transition duration-300">
+                    <span class="text-xs text-slate-500 uppercase tracking-wider">Completion</span>
+                    <span class="text-2xl font-bold text-neon-purple">97%</span>
+                </div>
+                 <div class="bg-black/40 p-3 rounded border border-zinc-800 flex flex-col items-center justify-center hover:border-neon-blue transition duration-300">
+                    <span class="text-xs text-slate-500 uppercase tracking-wider">Perfect Games</span>
+                    <span class="text-2xl font-bold text-white">301</span>
+                </div>
+                 <div class="bg-black/40 p-3 rounded border border-zinc-800 flex flex-col items-center justify-center hover:border-neon-purple transition duration-300">
+                    <span class="text-xs text-slate-500 uppercase tracking-wider">Badges</span>
+                    <span class="text-2xl font-bold text-white">135</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- HALL OF FAME (Lieblingsspiele) -->
+        <section class="space-y-8">
+            <div class="flex items-center justify-between mb-8">
+                <h2 class="text-3xl font-bold font-header text-neon-purple flex items-center gap-3">
+                    <i class="fa-solid fa-gamepad"></i>
+                    HALL_OF_FAME
+                </h2>
+                <!-- Der lila Strich rechts neben der Überschrift -->
+                <div class="h-px flex-1 bg-gradient-to-r from-neon-purple/50 to-transparent ml-6"></div>
+            </div>
+
+            <!-- Das Grid für die Spiele-Cover (wird per JavaScript gefüllt) -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-6" id="games-grid">
+                <!-- Hier kommen die Spiele rein -->
+            </div>
+        </section>
+
+        <!-- DAS ARSENAL (Hardware) -->
+        <section>
+            <h2 class="text-2xl font-display text-white mb-8 flex items-center gap-3">
+                <i class="fa-solid fa-microchip text-neon-blue"></i>
+                The Arsenal
+            </h2>
+
+            <div class="space-y-8">
+                <!-- Die zwei Haupt-PCs -->
+                 <div class="grid md:grid-cols-2 gap-8">
+                    <!-- Haupt Rechner -->
+                    <div class="glass-panel rounded-xl overflow-hidden group">
+                        <div class="bg-zinc-800/50 p-4 border-b border-zinc-700 flex justify-between items-center group-hover:bg-zinc-800/80 transition-colors">
+                             <h3 class="font-bold font-mono text-neon-blue">Main_Rig::System</h3>
+                             <i class="fa-solid fa-desktop text-slate-500"></i>
+                        </div>
+                        <div class="p-6 space-y-4 text-sm">
+                            <a href="https://www.amazon.de/s?k=Intel+Xeon+W9+3495X" target="_blank" class="flex gap-4 items-center group/item hover:bg-white/5 p-2 rounded transition">
+                                <i class="fa-solid fa-microchip text-2xl text-slate-600 group-hover/item:text-neon-blue transition-colors"></i>
+                                <div>
+                                    <div class="text-slate-200 font-bold">Intel Xeon W9 3495X</div>
+                                    <div class="text-xs text-slate-500 font-mono">Process Unit</div>
+                                </div>
+                            </a>
+                            <a href="https://www.amazon.de/s?k=ASUS+ProArt+GeForce+RTX+4080+OC" target="_blank" class="flex gap-4 items-center group/item hover:bg-white/5 p-2 rounded transition">
+                                <i class="fa-solid fa-memory text-2xl text-slate-600 group-hover/item:text-neon-blue transition-colors"></i>
+                                 <div>
+                                    <div class="text-slate-200 font-bold">ASUS ProArt RTX 4080 OC</div>
+                                    <div class="text-xs text-slate-500 font-mono">Graphics Unit</div>
+                                </div>
+                            </a>
+                            <div class="flex gap-4 items-center p-2">
+                                <i class="fa-solid fa-server text-2xl text-slate-600"></i>
+                                 <div>
+                                    <div class="text-slate-200 font-bold">128GB Kingston FURY Pro</div>
+                                    <div class="text-xs text-slate-500 font-mono">DDR5-6400 ECC</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+    
+                    <!-- Streaming PC -->
+                    <div class="glass-panel rounded-xl overflow-hidden group">
+                        <div class="bg-zinc-800/50 p-4 border-b border-zinc-700 flex justify-between items-center group-hover:bg-zinc-800/80 transition-colors">
+                             <h3 class="font-bold font-mono text-neon-blue">Stream_Deck::NUC</h3>
+                             <i class="fa-solid fa-satellite-dish text-slate-500"></i>
+                        </div>
+                         <div class="p-6 space-y-4 text-sm">
+                            <a href="https://www.amazon.de/s?k=ASUS+NUC+14+Enthusiast" target="_blank" class="flex gap-4 items-center group/item hover:bg-white/5 p-2 rounded transition">
+                                <i class="fa-solid fa-box-open text-2xl text-slate-600 group-hover/item:text-neon-blue transition-colors"></i>
+                                <div>
+                                    <div class="text-slate-200 font-bold">ASUS NUC 14 Enthusiast</div>
+                                    <div class="text-xs text-slate-500 font-mono">Compact System</div>
+                                </div>
+                            </a>
+                              <div class="flex gap-4 items-center p-2">
+                                <i class="fa-solid fa-database text-2xl text-slate-600"></i>
+                                 <div>
+                                    <div class="text-slate-200 font-bold">6TB NVMe Storage</div>
+                                    <div class="text-xs text-slate-500 font-mono">Kingston Renegade</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                 </div>
+
+                 <!-- Peripherie-Geräte (Maus, Tastatur etc.) -->
+                 <div class="glass-panel rounded-xl overflow-hidden">
+                    <div class="bg-zinc-800/50 p-4 border-b border-zinc-700">
+                         <h3 class="font-bold font-mono text-neon-blue mb-1">Peripherals::IO</h3>
+                         <p class="text-xs text-slate-500">Input/Output Devices & Streaming Gear</p>
+                    </div>
+                    <div class="p-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                        <!-- Apex 7 Pro -->
+                        <div class="bg-zinc-900/50 border border-zinc-800 rounded-lg p-3 hover:border-zinc-600 transition group cursor-default">
+                             <i class="fa-solid fa-keyboard text-slate-600 mb-2 group-hover:text-white transition-colors"></i>
+                             <div class="text-sm font-bold text-slate-300">Apex 7 Pro</div>
+                             <div class="text-[10px] text-slate-600 font-mono uppercase">Keyboard</div>
+                        </div>
+                        <!-- Rival 710 -->
+                        <div class="bg-zinc-900/50 border border-zinc-800 rounded-lg p-3 hover:border-zinc-600 transition group cursor-default">
+                             <i class="fa-solid fa-computer-mouse text-slate-600 mb-2 group-hover:text-white transition-colors"></i>
+                             <div class="text-sm font-bold text-slate-300">Rival 710</div>
+                             <div class="text-[10px] text-slate-600 font-mono uppercase">Mouse</div>
+                        </div>
+                        <!-- Headset -->
+                        <div class="bg-zinc-900/50 border border-zinc-800 rounded-lg p-3 hover:border-zinc-600 transition group cursor-default">
+                             <i class="fa-solid fa-headphones text-slate-600 mb-2 group-hover:text-white transition-colors"></i>
+                             <div class="text-sm font-bold text-slate-300">Arctis Pro Wireless</div>
+                             <div class="text-[10px] text-slate-600 font-mono uppercase">Audio</div>
+                        </div>
+                        <!-- Mixer -->
+                        <div class="bg-zinc-900/50 border border-zinc-800 rounded-lg p-3 hover:border-zinc-600 transition group cursor-default">
+                             <i class="fa-solid fa-sliders text-slate-600 mb-2 group-hover:text-white transition-colors"></i>
+                             <div class="text-sm font-bold text-slate-300">RØDECaster Pro II</div>
+                             <div class="text-[10px] text-slate-600 font-mono uppercase">Mixer</div>
+                        </div>
+                        <!-- Stream Deck -->
+                        <div class="bg-zinc-900/50 border border-zinc-800 rounded-lg p-3 hover:border-zinc-600 transition group cursor-default">
+                             <i class="fa-solid fa-table-cells text-slate-600 mb-2 group-hover:text-white transition-colors"></i>
+                             <div class="text-sm font-bold text-slate-300">Stream Deck MK.2</div>
+                             <div class="text-[10px] text-slate-600 font-mono uppercase">Control</div>
+                        </div>
+                        <!-- Kamera -->
+                        <div class="bg-zinc-900/50 border border-zinc-800 rounded-lg p-3 hover:border-zinc-600 transition group cursor-default">
+                             <i class="fa-solid fa-camera text-slate-600 mb-2 group-hover:text-white transition-colors"></i>
+                             <div class="text-sm font-bold text-slate-300">Sony Alpha 7400</div>
+                             <div class="text-[10px] text-slate-600 font-mono uppercase">Vision</div>
+                        </div>
+                        <!-- Prompter -->
+                        <div class="bg-zinc-900/50 border border-zinc-800 rounded-lg p-3 hover:border-zinc-600 transition group cursor-default">
+                             <i class="fa-solid fa-closed-captioning text-slate-600 mb-2 group-hover:text-white transition-colors"></i>
+                             <div class="text-sm font-bold text-slate-300">Elgato Prompter</div>
+                             <div class="text-[10px] text-slate-600 font-mono uppercase">Teleprompter</div>
+                        </div>
+                        <!-- Licht -->
+                         <div class="bg-zinc-900/50 border border-zinc-800 rounded-lg p-3 hover:border-zinc-600 transition group cursor-default">
+                             <i class="fa-regular fa-lightbulb text-slate-600 mb-2 group-hover:text-white transition-colors"></i>
+                             <div class="text-sm font-bold text-slate-300">Elgato Keylights</div>
+                             <div class="text-[10px] text-slate-600 font-mono uppercase">Lighting</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER (Unten) -->
+        <footer class="border-t border-zinc-800 pt-12 pb-24 text-center mt-12 bg-black/40 backdrop-blur-sm rounded-xl p-4">
+             <!-- Social Media Buttons -->
+             <div class="flex justify-center flex-wrap gap-6 mb-8">
+                 <a href="https://www.twitch.tv/stelltdichachtung" target="_blank" class="w-12 h-12 rounded-full flex items-center justify-center bg-zinc-800 hover:scale-125 hover:shadow-[0_0_25px_rgba(145,70,255,0.8)] hover:z-10 transition-all duration-300 ease-out bg-twitch group border border-transparent hover:border-white/50">
+                    <i class="fa-brands fa-twitch text-xl group-hover:animate-pulse"></i>
+                 </a>
+                 <a href="https://steamcommunity.com/id/mr-rioes/" target="_blank" class="w-12 h-12 rounded-full flex items-center justify-center bg-zinc-800 hover:scale-125 hover:shadow-[0_0_25px_rgba(102,192,244,0.8)] hover:z-10 transition-all duration-300 ease-out bg-steam group border border-transparent hover:border-white/50">
+                    <i class="fa-brands fa-steam text-xl group-hover:rotate-12 transition-transform"></i>
+                 </a>
+                 <a href="https://www.last.fm/de/user/spezialzt" target="_blank" class="w-12 h-12 rounded-full flex items-center justify-center bg-zinc-800 hover:scale-125 hover:shadow-[0_0_25px_rgba(186,0,0,0.8)] hover:z-10 transition-all duration-300 ease-out bg-lastfm group border border-transparent hover:border-white/50">
+                    <i class="fa-brands fa-lastfm text-xl group-hover:animate-bounce"></i>
+                 </a>
+                 <a href="https://app.trakt.tv/profile/spezialzt" target="_blank" class="w-12 h-12 rounded-full flex items-center justify-center bg-zinc-800 hover:scale-125 hover:shadow-[0_0_25px_rgba(237,28,36,0.8)] hover:z-10 transition-all duration-300 ease-out bg-trakt group border border-transparent hover:border-white/50">
+                    <i class="fa-solid fa-tv text-lg group-hover:text-white"></i>
+                 </a>
+                 <!-- Platzhalter Links (YouTube / Discord) -->
+                 <a href="#" class="w-12 h-12 rounded-full flex items-center justify-center bg-zinc-800 hover:scale-125 hover:shadow-[0_0_25px_rgba(255,0,0,0.8)] hover:z-10 transition-all duration-300 ease-out bg-youtube group border border-transparent hover:border-white/50">
+                    <i class="fa-brands fa-youtube text-xl group-hover:text-white"></i>
+                 </a>
+                 <a href="#" class="w-12 h-12 rounded-full flex items-center justify-center bg-zinc-800 hover:scale-125 hover:shadow-[0_0_25px_rgba(88,101,242,0.8)] hover:z-10 transition-all duration-300 ease-out bg-discord group border border-transparent hover:border-white/50">
+                    <i class="fa-brands fa-discord text-xl group-hover:spin-slow"></i>
+                 </a>
+             </div>
+             
+             <p class="font-mono text-sm text-slate-500 mb-6 flex items-center justify-center gap-2">
+                 Coded by Mr.Riös with <i class="fa-solid fa-heart text-red-500 animate-pulse"></i> and lots of <i class="fa-solid fa-bolt text-yellow-500"></i> Energy-Drinks
+             </p>
+
+             <!-- 🌓 THEME TOGGLE (Schicker 3-Wege Schalter) -->
+             <div class="flex justify-center mb-8">
+                 <div class="glass-panel p-1 rounded-full flex gap-1 items-center bg-black/50 backdrop-blur-md border border-zinc-700/50" id="theme-toggle-container">
+                     <!-- LIGHT -->
+                     <button onclick="switchTheme('light')" class="theme-btn w-10 h-10 flex items-center justify-center text-slate-500 hover:text-yellow-400" data-theme="light" title="Light Mode">
+                         <i class="fa-solid fa-sun text-lg"></i>
+                     </button>
+                     <!-- SYSTEM -->
+                     <button onclick="switchTheme('system')" class="theme-btn w-10 h-10 flex items-center justify-center text-slate-500 hover:text-white" data-theme="system" title="System Standard">
+                         <i class="fa-solid fa-desktop text-sm"></i>
+                     </button>
+                     <!-- DARK -->
+                     <button onclick="switchTheme('dark')" class="theme-btn w-10 h-10 flex items-center justify-center text-slate-500 hover:text-indigo-400" data-theme="dark" title="Dark Mode">
+                         <i class="fa-solid fa-moon text-sm"></i>
+                     </button>
+                 </div>
+             </div>
+             
+             <!-- Rechtliches (Öffnet Popups) -->
+             <div class="flex justify-center gap-6 text-xs font-mono text-slate-600">
+                 <button onclick="toggleModal('impressum')" class="hover:text-neon-blue transition underline decoration-dotted">Impressum</button>
+                 <span>|</span>
+                 <button onclick="toggleModal('privacy')" class="hover:text-neon-blue transition underline decoration-dotted">Datenschutz</button>
+             </div>
+        </footer>
+
+    </main>
+
+    <!-- 
+    📻 FLOATING WIDGET (WINAMP STYLE)
+    Das kleine "Now Playing" Fenster unten rechts.
+    -->
+    <div id="status-widget" class="fixed bottom-4 right-4 md:bottom-8 md:right-8 z-40 w-64 glass-panel p-3 rounded-lg border-2 border-zinc-700 shadow-2xl transition-all duration-500 ease-out translate-y-0 opacity-100 hover:scale-105 bg-black/80">
+        <div class="flex gap-3 items-center">
+             <!-- Audio Visualizer (Die 4 kleinen Balken) -->
+             <div class="flex items-end gap-[2px] h-6 w-8 pb-1">
+                 <div class="bar h-2 w-1.5 bg-neon-blue rounded-t-sm"></div>
+                 <div class="bar h-3 w-1.5 bg-neon-blue rounded-t-sm"></div>
+                 <div class="bar h-1 w-1.5 bg-neon-blue rounded-t-sm"></div>
+                 <div class="bar h-4 w-1.5 bg-neon-blue rounded-t-sm"></div>
+             </div>
+             <div class="overflow-hidden flex-1">
+                 <div class="text-[10px] font-mono uppercase text-slate-400 tracking-wider mb-0.5" id="widget-label">Listening to</div>
+                 <div class="text-xs font-bold text-white whitespace-nowrap overflow-ellipsis overflow-hidden" id="widget-content">Loading...</div>
+             </div>
+        </div>
+        <!-- Griff-Leiste oben (nur Deko für Retro-Look) -->
+        <div class="absolute -top-1 left-4 right-4 h-0.5 bg-zinc-600 rounded-full"></div>
+    </div>
+
+    <!-- 
+    =======================================================================
+    📝 MODALS (Popups)
+    Diese Fenster sind standardmäßig unsichtbar (class="hidden") und werden
+    per JavaScript eingeblendet.
+    =======================================================================
+    -->
+
+    <!-- IMPRESSUM -->
+    <div id="modal-impressum" class="fixed inset-0 z-[100] hidden bg-black/90 backdrop-blur flex items-center justify-center p-4">
+        <div class="glass-panel border-zinc-700 rounded-xl p-8 max-w-lg w-full relative shadow-2xl">
+            <button onclick="toggleModal('impressum')" class="absolute top-4 right-4 text-slate-500 hover:text-white"><i class="fa-solid fa-xmark fa-xl"></i></button>
+            <h3 class="text-xl font-display text-white mb-4">Impressum</h3>
+            <div class="prose prose-sm prose-invert text-slate-400 font-mono">
+                <p>Angaben gemäß § 5 TMG:<br>
+                Tobias Boyke<br>
+                Oberrather Str. 45<br>
+                40472 Düsseldorf</p>
+                <br>
+                <p>Kontakt:<br>
+                Email: Tobias.Boyke+admin@gmail.com</p>
+                <br>
+                <p>Haftungsausschluss: Keine Haftung für Inhalte externer Links. Für den Inhalt der verlinkten Seiten sind ausschließlich deren Betreiber verantwortlich.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- DATENSCHUTZ -->
+    <div id="modal-privacy" class="fixed inset-0 z-[100] hidden bg-black/90 backdrop-blur flex items-center justify-center p-4">
+         <div class="glass-panel border-zinc-700 rounded-xl p-8 max-w-2xl w-full relative shadow-2xl max-h-[90vh] overflow-y-auto">
+            <button onclick="toggleModal('privacy')" class="absolute top-4 right-4 text-slate-500 hover:text-white"><i class="fa-solid fa-xmark fa-xl"></i></button>
+             <h3 class="text-xl font-display text-white mb-4">Datenschutz & Disclaimer</h3>
+             <div class="prose prose-sm prose-invert text-slate-400 font-mono space-y-4">
+                <p><strong>1. Datenschutz auf einen Blick</strong><br>
+                Diese Website, gehostet via GitHub Pages/Netlify, erhebt keine personenbezogenen Daten. Es werden keine Tracker oder Werbe-Cookies eingesetzt.</p>
+                
+                <p><strong>2. Externe Ressourcen (CDNs)</strong><br>
+                Zur korrekten Darstellung und Funktion dieser Website werden Bibliotheken von externen Servern geladen (Content Delivery Networks). Hierbei wird technisch bedingt Ihre IP-Adresse an den jeweiligen Anbieter übermittelt.
+                <ul class="list-disc pl-4">
+                    <li><strong>FontAwesome:</strong> Für Icons (cdnjs.cloudflare.com).</li>
+                    <li><strong>TailwindCSS:</strong> Für Styles (cdn.jsdelivr.net).</li>
+                    <li><strong>Google Fonts:</strong> Für Schriftarten (Press Start 2P, Inter, Courier Prime). Google Fonts werden lokal im Cache Ihres Browsers gespeichert, um Ladezeiten zu minimieren. (fonts.googleapis.com).</li>
+                    <li><strong>Steam CDN:</strong> Für die Anzeige von Spiele-Covern (shared.fastly.steamstatic.com).</li>
+                    <li><strong>UI Avatars:</strong> Für das Profilbild (ui-avatars.com).</li>
+                </ul>
+                Durch die Nutzung der Website erklären Sie sich mit dieser technischen Notwendigkeit einverstanden.</p>
+
+                <p><strong>3. Externe Links</strong><br>
+                Diese Seite enthält Verlinkungen zu Twitch, Steam, Last.fm, Trakt und Amazon. Wenn Sie diese Links anklicken, verlassen Sie meinen Verantwortungsbereich. Es gelten die Datenschutzbestimmungen der Zielseite.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 
+    =======================================================================
+    🧠 DAS GEHIRN (JAVASCRIPT)
+    Hier passiert die Magie (Interaktion, Animationen, Daten).
+    =======================================================================
+    -->
+    <script>
+        /** 
+         * 🎮 SPIELE-DATEN
+         * Hier definieren wir, welche Spiele in der 'Hall of Fame' angezeigt werden.
+         * 'id' ist die Steam-App-ID (findest du auf der Steam Store Seite in der URL).
+         * 'name' ist der Titel des Spiels.
+         */
+        const games = [
+            { id: 427520, name: "Factorio" },
+            { id: 553850, name: "Helldivers II" },
+            { id: 244850, name: "Space Engineers" },
+            { id: 1091500, name: "Cyberpunk 2077" },
+            { id: 552990, name: "World of Warships" },
+            { id: 255710, name: "Cities: Skylines" }, 
+            { id: 352720, name: "The Universe" }, 
+            { id: 271590, name: "GTA V" },
+            { id: 1827660, name: "R.E.F.O." },
+            { id: 361420, name: "Astroneer" },
+            { id: 1568590, name: "Goose Goose Duck" },
+            { id: 281990, name: "Stellaris" }
+        ];
+
+        const gamesGrid = document.getElementById('games-grid');
+
+        // Wir gehen durch jedes Spiel in der Liste und erstellen eine Karte
+        games.forEach(game => {
+            const card = document.createElement('div');
+            // Basis-Klassen für die Karte
+            card.className = "tilt-card relative h-48 rounded-xl cursor-pointer group"; 
+            
+            // Wir bauen die URL zum Steam-Bild zusammen
+            const imgUrl = `https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/${game.id}/header.jpg`;
+            
+            // Der HTML-Inhalt jeder Karte
+            card.innerHTML = `
+                <div class="tilt-inner absolute inset-0 rounded-xl overflow-hidden shadow-lg border border-zinc-800 bg-zinc-900">
+                    <div class="w-full h-full bg-cover bg-center transition-transform duration-500 group-hover:scale-110" style="background-image: url('${imgUrl}');">
+                        <!-- Ein dunkler Verlauf über dem Bild für bessere Lesbarkeit -->
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
+                    </div>
+                </div>
+                <!-- Der Titel des Spiels (schwebt über dem Bild) -->
+                <div class="absolute bottom-0 left-0 right-0 p-4 transform translate-y-2 opacity-80 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none z-20">
+                    <h4 class="font-display text-[10px] md:text-xs text-white drop-shadow-md tracking-wider">${game.name}</h4>
+                </div>
+            `;
+            
+            // Event-Listener: Was passiert, wenn die Maus kommt oder geht?
+            card.addEventListener('mousemove', handleTilt); // Maus bewegt sich -> Kippen
+            card.addEventListener('mouseleave', resetTilt); // Maus geht raus -> Zurücksetzen
+            
+            gamesGrid.appendChild(card);
+        });
+
+        // 🏗️ 3D KIPP-EFFEKT LOGIK
+        function handleTilt(e) {
+            const card = e.currentTarget;
+            const rect = card.getBoundingClientRect(); // Wo ist die Karte genau?
+            
+            // Mausposition innerhalb der Karte berechnen
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            
+            // Berechnen der Drehung (Je weiter vom Zentrum, desto mehr Drehung)
+            // Die '12' bestimmt die Stärke des Effekts. Kleinerer Wert = Weniger Kippen.
+            const rotateX = ((y - centerY) / centerY) * -12; 
+            const rotateY = ((x - centerX) / centerX) * 12;
+
+            // Wir wenden die Transformation an
+            card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.05, 1.05, 1.05)`;
+        }
+
+        // Karten-Position zurücksetzen
+        function resetTilt(e) {
+             e.currentTarget.style.transform = `perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)`;
+        }
+
+        // 🎵 WIDGET LOGIK (Das kleine Fenster unten rechts)
+        // Was soll da angezeigt werden?
+        const widgetContent = [
+            { type: "Listening to", text: "Carpenter Brut - Turbo Killer" },
+            { type: "Watching", text: "Severance (S2E1)" },
+            { type: "Listening to", text: "The Midnight - Los Angeles" },
+            { type: "Playing", text: "Space Engineers" },
+            { type: "Listening to", text: "Gunship - Tech Noir" },
+            { type: "Watching", text: "For All Mankind" }
+        ];
+        
+        let widgetIndex = 0;
+        const wLabel = document.getElementById('widget-label');
+        const wText = document.getElementById('widget-content');
+
+        // Alle 5 Sekunden (5000ms) den Inhalt wechseln
+        setInterval(() => {
+            widgetIndex = (widgetIndex + 1) % widgetContent.length;
+            const item = widgetContent[widgetIndex];
+            
+            wLabel.innerText = item.type;
+            wText.innerText = item.text;
+            
+            // Kurz pulsieren lassen beim Wechsel
+            wText.classList.add('animate-pulse');
+            setTimeout(() => wText.classList.remove('animate-pulse'), 500);
+            
+        }, 5000);
+
+        // 🪟 MODAL LOGIK (Fenster auf/zu machen)
+        window.toggleModal = function(id) {
+            const modal = document.getElementById(`modal-${id}`);
+            if (modal.classList.contains('hidden')) {
+                modal.classList.remove('hidden'); // Anzeigen
+                document.body.style.overflow = 'hidden'; // Hintergrund-Scrollen verbieten
+            } else {
+                modal.classList.add('hidden'); // Verstecken
+                document.body.style.overflow = ''; // Scrollen wieder erlauben
+            }
+        };
+
+        // 🤫 KONAMI CODE (Ein kleines Easter Egg)
+        // Code: Oben, Oben, Unten, Unten, Links, Rechts, Links, Rechts, B, A
+        const konamiCode = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
+        let konamiIndex = 0;
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === konamiCode[konamiIndex]) {
+                konamiIndex++;
+                if (konamiIndex === konamiCode.length) {
+                    activateKonamiMode();
+                    konamiIndex = 0;
+                }
+            } else {
+                konamiIndex = 0; // Falsche Taste -> Von vorne anfangen
+            }
+        });
+
+        function activateKonamiMode() {
+            // 50 Konfetti-Schnipsel erzeugen
+            for(let i=0; i<50; i++) createConfetti();
+            // Bildschirm kurz aufleuchten lassen
+            document.body.classList.add('animate-pulse');
+            setTimeout(() => document.body.classList.remove('animate-pulse'), 1000);
+        }
+
+        // Erzeugt einen einzelnen Konfetti-Schnipsel
+        function createConfetti() {
+            const confetti = document.createElement('div');
+            confetti.classList.add('confetti');
+            confetti.style.left = Math.random() * 100 + 'vw'; // Zufällige Position
+            confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`; // Zufällige Farbe
+            confetti.style.animationDuration = Math.random() * 3 + 2 + 's'; // Zufällige Fallgeschwindigkeit
+            document.body.appendChild(confetti);
+            setTimeout(() => confetti.remove(), 5000); // Nach 5 Sekunden löschen
+        }
+
+        // 🔦 SPOTLIGHT LOGIK (Taschenlampe)
+        const spotlight = document.getElementById('spotlight');
+        document.addEventListener('mousemove', (e) => {
+            if (spotlight) {
+                // Berechnet die Mausposition in Prozent (0-100%)
+                const x = (e.clientX / window.innerWidth) * 100;
+                const y = (e.clientY / window.innerHeight) * 100;
+                
+                // Setzt die CSS-Variablen für den Farbverlauf
+                spotlight.style.setProperty('--x', `${x}%`);
+                spotlight.style.setProperty('--y', `${y}%`);
+                spotlight.style.opacity = '1'; // Sichtbar machen sobald Maus sich bewegt
+            }
+        });
+
+        // 🌓 THEME LOGIK
+        const htmlRoot = document.documentElement;
+        const themeBtns = document.querySelectorAll('.theme-btn');
+
+        // Funktion zum Setzen des Themes
+        function switchTheme(mode) {
+            // 1. Speichern
+            localStorage.setItem('theme', mode);
+            
+            // 2. Anwenden
+            applyTheme(mode);
+            
+            // 3. UI updaten
+            updateThemeUI(mode);
+        }
+
+        function applyTheme(mode) {
+             // Reset
+             htmlRoot.classList.remove('light-mode');
+             
+             if (mode === 'light') {
+                 htmlRoot.classList.add('light-mode');
+             } else if (mode === 'system') {
+                 // Check System Prefernece
+                 if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+                     htmlRoot.classList.add('light-mode');
+                 }
+                 // Bei Dark Mode machen wir nichts, da Default = Dark
+             }
+             // Bei 'dark' machen wir nichts, da Default = Dark
+        }
+
+        function updateThemeUI(activeMode) {
+            themeBtns.forEach(btn => {
+                const theme = btn.dataset.theme;
+                if (theme === activeMode) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+        }
+
+        // Init beim Laden
+        (function initTheme() {
+            // Gucken was gespeichert ist, sonst System
+            const savedTheme = localStorage.getItem('theme') || 'system';
+            applyTheme(savedTheme);
+            updateThemeUI(savedTheme);
+            
+            // Listener für System-Änderungen (wenn User OS on-the-fly ändert)
+            window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', e => {
+                if (localStorage.getItem('theme') === 'system') {
+                    applyTheme('system');
+                }
+            });
+        })();
+    </script>
+</body>
+</html>
