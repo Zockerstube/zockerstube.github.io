@@ -1,90 +1,99 @@
-# 🕹️ Die Zockerstube (Mr.Riös)
+# 🕹️ Die Zockerstube
+> **Community First // Enthusiast Driven**
 
-Willkommen im Maschinenraum meiner persönlichen Website!
-Dieses Repository ist das Zuhause von `https://mr.rioes.de` (oder wo auch immer sie gerade läuft).
+[![Status: Online](https://img.shields.io/badge/Status-Online-22c55e?style=for-the-badge&logo=statuspage)](https://zockerstube.github.io/)
+[![License: OSS](https://img.shields.io/badge/License-Open_Source-00FFFF?style=for-the-badge&logo=github)](LICENSE)
+[![Discord: Join](https://img.shields.io/badge/Discord-Join_Us-5865F2?style=for-the-badge&logo=discord)](https://discord.gg/zockerstube)
+[![Stack: Vanilla JS](https://img.shields.io/badge/Stack-Vanilla_JS-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
 
-Dies ist kein gewöhnliches Portfolio. Dies ist ein **Cyberpunk-Spielplatz**, gebaut um Spaß zu machen, gut auszusehen und meine Liebe zu Retro-Games, Code & Design zu zeigen.
+Willkommen in der digitalen Schaltzentrale der **Zockerstube**. Dies ist kein gewöhnliches Repository — es ist das Fundament eines „Community-First“ Projekts für Nerds, Geeks und Gamer.
 
 ---
 
-## 🏗️ Architektur & Technologie
+## 📋 Table of Contents
+- [COMMUNITY_CORE.sys](#-community_coresys)
+- [The Architects](#-the-architects-founder-bios)
+- [Technical Blueprint](#-technical-blueprint)
+- [Community Flow](#-community-flow)
+- [Installation & Nutzung](#-installation--nutzung)
+- [Legal & Privacy](#-legal--privacy)
 
-Dieses Projekt wurde mit dem **"Keep it Simple, Stupid" (KISS)** Prinzip gebaut, aber mit einem modernen Anstrich. Keine riesigen Frameworks, kein Build-Step (außer du willst es), einfach pure Web-Power.
+---
+
+## 🧠 COMMUNITY_CORE.sys
+**Mehr als nur ein Server.**
+
+Die **Zockerstube** ist ein Projekt, das zeigt, dass großartige Gemeinschaften nicht auf teuren Abos basieren, sondern auf ehrlichem Austausch und Leidenschaft.
+
+> [!IMPORTANT]
+> **Unsere Philosophie:** Wir verzichten bewusst auf generische SaaS-Bots und setzen auf **Open-Source** sowie selbst entwickelte Lösungen. Das gibt uns maximale Kontrolle über unsere Features und schützt die Privatsphäre unserer Mitglieder.
+
+---
+
+## 🛡️ The Architects (Founder Bios)
+
+| Founder | Role | Description |
+| :--- | :--- | :--- |
+| **Mr.Riös** | Technical Soul | Stratege und Architekt. Liebt komplexe Systeme, logische Perfektion und EVE Online. |
+| **Mrs.Crunch** | Creative Heart | Design-Leitung. Verwandelt Logik in Ästhetik und sorgt für den perfekten Vibe. |
+
+---
+
+## ⚙️ Technical Blueprint
 
 ### Der Tech-Stack
-| Technologie | Warum? |
-|Text|Beschreibung|
-|---|---|
-| **HTML5** | Das Skelett. Semantisch korrekt (meistens) und solide. |
-| **Tailwind CSS v4** | Das Styling. Wir laden es direkt via CDN für schnelle Prototypen. *Hinweis: In einer echten Produktion würde man das builden, aber für diese Seite reicht die CDN Version völlig.* |
-| **Vanilla JS** | Die Logik. Kein React, kein Vue, kein Angular. Nur reines JavaScript. Das bedeutet: Diese Seite wird auch in 10 Jahren noch laufen, ohne dass du `npm install` reparieren musst. |
-| **FontAwesome** | Die Icons. Alles was du an kleinen Bildchen siehst (Steam Logo, Twitch etc.). |
-| **Google Fonts** | `Press Start 2P` für Retro-Feeling, `Inter` für Lesbarkeit, `Courier Prime` für Code-Optik. |
+Die Zockerstube basiert auf dem **KISS-Prinzip** (Keep It Simple, Stupid), kombiniert mit moderner Web-Technologie:
+
+*   **HTML5 & Vanilla CSS**: Reine Performance ohne Build-Step Overhead.
+*   **Vanilla JS**: Robuste Logik, die auch in 10 Jahren noch läuft.
+*   **FontAwesome v6**: Stabile und konsistente Icon-Einbindung.
+*   **Hardware Acceleration**: GPU-beschleunigte 3D-Kipp-Effekte und Gitter-Animationen.
+
+### Rendering-Optimierungen
+| Feature | Technik | Nutzen |
+| :--- | :--- | :--- |
+| **LCP Optimization** | `fetchpriority="high"` | Instant-Laden des Hero-Bereichs. |
+| **Lazy Loading** | `IntersectionObserver` | Proaktives Laden von Sektionen 200px vor Sicht. |
+| **Main Layer** | `content-visibility: auto` | Schnellerer Initialaufbau durch Render-Skipping. |
 
 ---
 
-## 🎨 Design-Philosophie
+## 🚦 Community Flow
+Wie wird man Teil der Stube?
 
-Das Design folgt einem **"Neon-Noir / Cyberpunk"** Thema.
-- **Farben:** Wir nutzen CSS-Variablen (`:root`), um Farben zentral zu steuern.
-  - `Neon Blue` (#00FFFF): Für aktive Elemente und Highlights.
-  - `Neon Purple` (#bd00ff): Für Akzente und "Magie".
-  - `Dark / Zinc`: Für den Hintergrund (nicht pures Schwarz, das ist zu hart).
-- **Bewegung:** Alles soll "leben". Buttons leuchten, Karten kippen (Tilt-Effekt), Hintergründe scannen.
-- **Glassmorphism:** Halb-transparente Container ("Frosted Glass") geben Tiefe.
+```mermaid
+graph TD
+    A["🚪 GUEST (Start)"] --> B["📜 RULES_V1 (Check)"]
+    B --> C{"✅ Accepted?"}
+    C -- "No" --> D["❌ Rejected"]
+    C -- "Yes" --> E["🏷️ INTERESTS (Nerdforum)"]
+    E --> F["🛡️ MEMBER (Verified)"]
+    
+    style A fill:#1e293b,stroke:#00FFFF,stroke-width:2px,color:#fff
+    style F fill:#1e293b,stroke:#22c55e,stroke-width:2px,color:#fff
+    style B fill:#1e293b,stroke:#bd00ff,stroke-width:2px,color:#fff
+```
 
 ---
 
 ## 🚀 Installation & Nutzung
 
-Du willst an der Seite basteln? Easy.
+1.  **Clone the Repository**:
+    ```bash
+    git clone https://github.com/Zockerstube/zockerstube.git
+    ```
+2.  **Open Index**: Einfach die `index.html` im Browser öffnen.
+3.  **Local Dev**: Für automatische Refreshes empfehlen wir `Live Server` (VS Code Extension).
 
-1. **Repository klonen** (oder runterladen).
-2. **`index.html` öffnen**. Einfach im Browser doppelklicken. Fertig.
-
-Es ist kein Server nötig, keine Datenbank, nichts. Es ist eine statische Seite.
-
----
-
-## 🛠️ Anpassungs-Guide (Für dein Zukunfts-Ich)
-
-Hier ist dein Spickzettel, wenn du in 5 Jahren vergessen hast, wie alles geht.
-
-### 1. Neue Spiele hinzufügen
-Suche im Code (`index.html`) nach dem Bereich `const games = [...]`.
-Dort ist eine Liste. Füge einfach eine Zeile hinzu:
-```javascript
-{ id: 123456, name: "Neues Spiel" },
-```
-Die `id` ist die **Steam App ID**. Die findest du, wenn du das Spiel im Steam-Shop aufrufst, oben in der URL.
-
-### 2. Links ändern (Social Media)
-Suche im HTML (ziemlich weit unten im `<footer>`) nach den `<a>` Tags. Ändere einfach das `href="..."`.
-
-### 3. Last.fm API Key
-Damit die Musik-Anzeige ("Listening to...") funktioniert, brauchst du einen API Key.
-Suche im Code nach `const API_KEY = '...'`.
-Wenn du keinen hast: Gehe auf [last.fm/api](https://www.last.fm/api), erstelle einen "API Account" und kopiere den Key dort rein.
-
-### 4. Farben ändern
-Ganz oben im `<head>` Bereich, im `<style>` Block, findest du `:root`.
-Ändere dort einfach die Hex-Codes (z.B. `--color-neon-blue: #...`) und die ganze Seite färbt sich um.
+> [!TIP]
+> Die Seite benötigt keinen Server und keine Datenbank. Sie ist zu 100% statisch und sicher.
 
 ---
 
-## 📂 Struktur
+## 🛡️ Legal & Privacy
 
-- `index.html`: **Alles**. Ja wirklich. Struktur, Styles (im Head) und Logik (unten im Body). Warum? Weil es so einfacher ist, alles im Blick zu haben.
-- `assets/`: Bilder (Favicon, Logo falls vorhanden).
-
----
-
-## ⚠️ Bekannte "Eigenheiten" (Features, not Bugs)
-
-- **Der 3D-Kipp-Effekt:** Berechnet die Mausposition relativ zur Mitte der Karte. Kann auf Handys manchmal komisch aussehen (da kein Hover), ist aber okay.
-- **Tailwind CDN:** Beim allerersten Laden kann es kurz "flackern" (FOUC), bis Tailwind geladen ist. Das ist der Preis für die Einfachheit ohne Build-Tool.
+Dieses Projekt ist anonymisiert. Der „Impressum“-Bereich auf der Website wurde so angepasst, dass die Privatsphäre der Community gewahrt bleibt, während wir für Support & Kontakt über unseren Discord erreichbar sind.
 
 ---
 
-*Coded with ❤️, caffeine and heavy synthwave music.*
-*Mr.Riös / 2026*
+*Coded with ❤️ and Synthwave by Mr.Riös & Mrs.Crunch // 2026*
