@@ -1,0 +1,118 @@
+/* =======================================================================
+ * 📐 LAYOUT — Strukturelle Container und Grid-Systeme
+ * =======================================================================
+ * KISS: Nur das was gebraucht wird. Keine Over-Engineering.
+ * ======================================================================= */
+
+/* === Haupt-Container === */
+.container {
+    width: 100%;
+    max-width: 80rem;           /* 1280px = max-w-7xl */
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: var(--space-md);
+    padding-right: var(--space-md);
+}
+
+@media (min-width: 640px) {
+    .container {
+        padding-left: var(--space-lg);
+        padding-right: var(--space-lg);
+    }
+}
+
+@media (min-width: 1024px) {
+    .container {
+        padding-left: var(--space-xl);
+        padding-right: var(--space-xl);
+    }
+}
+
+/* === Haupt-Inhalt Wrapper === */
+.main-content {
+    position: relative;
+    z-index: 10;
+    padding-top: var(--space-3xl);
+    padding-bottom: var(--space-3xl);
+    flex-grow: 1;
+}
+
+/* === Section Spacing (vertikaler Rhythmus) === */
+.section {
+    margin-bottom: 6rem;         /* ~96px = space-y-24 */
+}
+
+.section:last-child {
+    margin-bottom: 0;
+}
+
+/* === Grid Systeme === */
+.grid-2 {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-xl);
+}
+
+@media (min-width: 768px) {
+    .grid-2 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.grid-2-4 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-lg);
+}
+
+@media (min-width: 1024px) {
+    .grid-2-4 {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+.grid-peripherals {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-md);
+}
+
+@media (min-width: 768px) {
+    .grid-peripherals {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .grid-peripherals {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+/* === Flex Utilities === */
+.flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.flex-between {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* === Section Header mit Linie === */
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-lg);
+    margin-bottom: var(--space-xl);
+}
+
+.section-header__line {
+    height: 1px;
+    flex: 1;
+    background: linear-gradient(to right, var(--color-neon-purple), transparent);
+    opacity: 0.5;
+}

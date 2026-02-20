@@ -1,775 +1,476 @@
 <!DOCTYPE html>
-<html lang="de" class="scroll-smooth">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Die Zockerstube | Mr.Riös</title>
-    
-    <!-- 
-    =======================================================================
-    🛠️ TECHNIK-ECK (LIBRARIES)
-    Hier laden wir externe Werkzeuge, die uns Arbeit abnehmen.
-    =======================================================================
-    1. Tailwind CSS: Ein Werkzeugkoffer für Design (macht Styling einfach).
-    2. Google Fonts: Schicke Schriftarten aus dem Internet.
-    3. FontAwesome: Die Bibliothek für die ganzen Icons (Twitch, Steam Logos etc.).
-    -->
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    
+    <meta name="description" content="Die Zockerstube – Home of StelltDichAchtung. Gaming, Tech & Community von Mr.Riös.">
+
+    <!-- 🖼️ FAVICON -->
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+
+    <!-- 🎨 GOOGLE FONTS -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- Wir laden: 'Courier Prime' (Code-Schrift), 'Inter' (Leseschrift), 'Press Start 2P' (Retro-Gaming Schrift) -->
     <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;500;600;800&family=Press+Start+2P&display=swap" rel="stylesheet">
-    
-    <!-- 
-    🖼️ FAVICON 
-    Das kleine Icon oben im Browser-Tab.
-    -->
-    <link rel="icon" type="image/png" href="assets/favicon.png">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-    <style type="text/tailwindcss">
-        /* 
-        =======================================================================
-        🎨 DESIGN-ZENTRALE (CSS VARIABLEN)
-        Hier definieren wir die Farben und Schriften der Seite zentral.
-        Ändere hier einen Wert, und er ändert sich ÜBERALL auf der Seite.
-        =======================================================================
-        */
-        @theme {
-            /* 
-            ZUKUNFTS-NOTE #1: Farben
-            Warum definieren wir die hier? 
-            Damit wir sie an EINE Stelle ändern müssen, wenn wir statt "Blau" plötzlich "Pink" wollen.
-            
-            --color-neon-blue: Die Hauptfarbe (Konturen, Links).
-            --color-neon-dark: Für Schattierungen.
-            --color-bg-dark: Zeigt auf die CSS-Variable --bg-main (siehe unten), damit der Theme-Switch (Hell/Dunkel) klappt.
-            */
-            --color-neon-blue: #00FFFF;
-            --color-neon-dark: #0077FF;
-            --color-neon-purple: #bd00ff;
-            --color-bg-dark: var(--bg-main);
-            
-            /* 
-            ZUKUNFTS-NOTE #2: Schriften
-            Wir nutzen 'Press Start 2P' für diesen "Game Over" Look.
-            'Inter' ist für lange Texte, damit die Augen nicht bluten.
-            */
-            --font-display: 'Press Start 2P', cursive;
-            --font-mono: 'Courier Prime', monospace;
-            --font-body: 'Inter', sans-serif;
-        }
+    <!-- 🎯 FONTAWESOME 7.2 (Kit) -->
+    <script src="https://kit.fontawesome.com/ba530f4a27.js" crossorigin="anonymous"></script>
 
-        /* 
-        ⚡ GLITCH-EFFEKT ANIMATION
-        Sorgt dafür, dass Text kurz "wackelt" (wie bei einem Fehler in der Matrix).
-        */
-        @keyframes glitch {
-            0% { transform: translate(0) }
-            20% { transform: translate(-2px, 2px) }
-            40% { transform: translate(-2px, -2px) }
-            60% { transform: translate(2px, 2px) }
-            80% { transform: translate(2px, -2px) }
-            100% { transform: translate(0) }
-        }
-
-        /* 
-        🌊 Gitter-Bewegung
-        Lässt das Hintergrund-Gitter unendlich nach unten "fahren".
-        */
-        @keyframes grid-move {
-            0% { background-position: 0 0; }
-            100% { background-position: 0 40px; }
-        }
-
-        /*
-        🌐 RETRO-GRID (Der 80er Jahre Boden)
-        */
-        .retro-grid {
-            /* Erstellt ein kariertes Muster mit Farbverläufen */
-            /* HIER habe ich die Sichtbarkeit erhöht (0.25 statt 0.1) */
-            background-image: 
-                linear-gradient(rgba(0, 255, 255, 0.25) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 255, 255, 0.25) 1px, transparent 1px);
-            background-size: 40px 40px; /* Größe der Kästchen */
-            perspective: 500px;         /* 3D-Perspektive */
-            transform-style: preserve-3d;
-            animation: grid-move 2s linear infinite; /* Die Endlos-Fahrt */
-        }
-
-        /* Klasse für Elemente, die beim Drüberfahren "glitchen" sollen */
-        .glitch-hover:hover {
-            animation: glitch 0.3s cubic-bezier(.25, .46, .45, .94) both infinite;
-            color: var(--color-neon-blue);
-            text-shadow: 2px 2px var(--color-neon-purple); /* Lila Schatten im Glitch */
-        }
-
-        /*
-        🪟 GLAS-PANEELE
-        Der Look für die "Karten" auf der Seite (halbtransparent, unscharfer Hintergrund).
-        */
-        .glass-panel {
-            @apply bg-zinc-900/60 backdrop-blur-md border border-zinc-800 shadow-xl;
-        }
-        
-        /* 
-        🧊 3D KARTEN EFFEKT (CSS Teil)
-        Die Logik für das Kippen der Karten.
-        */
-        .tilt-card {
-            transform-style: preserve-3d;
-            transition: transform 0.1s cubic-bezier(0.03, 0.98, 0.52, 0.99); /* Sehr weiche Bewegung */
-            will-change: transform; /* Sagt dem Browser: "Achtung, das bewegt sich gleich!" */
-        }
-        
-        .tilt-inner {
-            transform: translateZ(20px); /* Hebt den Inhalt leicht aus der Karte heraus (3D Tiefe) */
-            backface-visibility: hidden; /* Verhindert Darstellungsfehler beim Drehen */
-        }
-
-        /* 
-        🖱️ SCROLLBAR (Der Balken rechts) 
-        Wir machen ihn dunkel und stylisch.
-        */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #09090b; 
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #3f3f46; 
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #0077FF; /* Leuchtet Blau beim Anfassen */
-        }
-
-        /* 🎉 KONAMI CONFETTI */
-        .confetti {
-            position: fixed;
-            width: 10px;
-            height: 10px;
-            background-color: #f00;
-            animation: fall linear forwards;
-            z-index: 9999;
-            pointer-events: none; /* Klicks gehen durch das Konfetti durch */
-        }
-        @keyframes fall {
-            to { transform: translateY(100vh) rotate(720deg); } /* Fällt nach unten und dreht sich */
-        }
-
-        /* 📊 AUDIO VISUALIZER (Die zappelnden Balken im Widget) */
-        .bar {
-            width: 4px;
-            background: #00FFFF;
-            animation: equalize 1s infinite; /* Die Zappel-Animation */
-        }
-        /* Jeder Balken ist etwas versetzt, damit es zufällig aussieht */
-        .bar:nth-child(1) { animation-delay: -0.2s; }
-        .bar:nth-child(2) { animation-delay: -0.4s; }
-        .bar:nth-child(3) { animation-delay: -0.6s; }
-        .bar:nth-child(4) { animation-delay: -0.8s; }
-        
-        @keyframes equalize {
-            0% { height: 5px; }
-            50% { height: 15px; } /* Geht hoch */
-            100% { height: 5px; }
-        }
-
-        /* 🔄 LAUFSCHRIFT ANIMATION */
-        @keyframes scroll {
-            0% { transform: translateX(100%); }
-            100% { transform: translateX(-100%); }
-        }
-        .animate-marquee {
-            display: inline-block;
-            animation: scroll 10s linear infinite;
-            padding-left: 100%; /* Startet außerhalb */
-        }
-
-        /* 
-        🎨 MARKEN-FARBEN (Social Media) 
-        Spezifische Farben für Twitch (Lila), Steam (Blau) usw.
-        */
-        .bg-twitch { background-color: #9146FF; color: white; }
-        .bg-steam { background-color: #1b2838; color: white; }
-        .bg-lastfm { background-color: #ba0000; color: white; }
-        .bg-trakt { background-color: #ED1C24; color: white; }
-        .bg-youtube { background-color: #FF0000; color: white; }
-        .bg-discord { background-color: #5865F2; color: white; }
-    </style>
-    <!-- Custom CSS für Animationen und Terminal -->
-    <style>
-        @keyframes spin-slow {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-        .animate-spin-slow {
-            animation: spin-slow 8s linear infinite;
-        }
-        
-        /* Terminal Styles */
-        #terminal-overlay {
-            transform: translateY(-100%);
-            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        #terminal-overlay.open {
-            transform: translateY(0);
-        }
-        .cursor-blink {
-            animation: blink 1s step-end infinite;
-        }
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0; }
-        }
-    </style>
-    <style type="text/tailwindcss">
-        /* 
-        🌓 THEME ENGINE 
-        Wir definieren Farben als CSS-Variablen, damit wir sie umschalten können (Hell/Dunkel).
-        */
-        :root {
-            /* STANDARD (DARK MODE) */
-            --bg-main: #050505;
-            --text-main: #e2e8f0; /* slate-200 */
-            --glass-bg: rgba(24, 24, 27, 0.6); /* zinc-900/60 */
-            --glass-border: #27272a; /* zinc-800 */
-        }
-
-        :root.light-mode {
-            /* LIGHT MODE */
-            --bg-main: #f0fdfa; /* Sehr helles Cyan/Weiß */
-            --text-main: #0f172a; /* slate-900 */
-            --glass-bg: rgba(255, 255, 255, 0.75);
-            --glass-border: #e2e8f0; /* slate-200 */
-            
-            /* Wir überschreiben auch die Neon-Farben für bessere Lesbarkeit auf Hell */
-            --color-bg-dark: #f0fdfa; 
-        }
-
-        body {
-            background-color: var(--bg-main);
-            color: var(--text-main);
-            transition: background-color 0.5s ease, color 0.5s ease;
-        }
-
-        /* Update für Glass-Panel damit es dynamisch ist */
-        .glass-panel {
-            background-color: var(--glass-bg) !important;
-            border-color: var(--glass-border) !important;
-        }
-        
-        /* Toggle Styling */
-        .theme-btn {
-            @apply p-2 rounded-full transition-all duration-300 relative overflow-hidden;
-        }
-        .theme-btn.active {
-            @apply text-neon-blue bg-white/10 shadow-[0_0_15px_rgba(0,255,255,0.3)];
-        }
-        
-        /* Retro Grid Anpassung für Light Mode */
-        html.light-mode .retro-grid {
-             background-image: 
-                linear-gradient(rgba(0, 119, 255, 0.15) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 119, 255, 0.15) 1px, transparent 1px);
-        }
-    </style>
+    <!-- 🎨 STYLESHEETS (OOCSS Architektur) -->
+    <link rel="stylesheet" href="css/tokens.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/utilities.css">
 </head>
-<body class="bg-black text-slate-300 font-sans selection:bg-neon-blue selection:text-black overflow-x-hidden">
+<body>
 
-    <!-- TERMINAL CONSOLE (QUAKE STYLE) -->
-    <div id="terminal-overlay" class="fixed top-0 left-0 right-0 h-[50vh] bg-black/95 border-b-2 border-neon-green z-[300] shadow-[0_0_50px_rgba(0,255,0,0.2)] flex flex-col font-mono text-sm md:text-base">
-        <!-- Terminal Header -->
-        <div class="flex justify-between items-center px-4 py-2 bg-zinc-900 border-b border-zinc-800 text-xs text-zinc-500">
+    <!-- 🚀 LOADING SCREEN -->
+    <div class="loading-screen" aria-hidden="true">
+        <div class="loading-screen__text">SYSTEM_BOOT</div>
+        <div class="loading-screen__bar">
+            <div class="loading-screen__bar-fill"></div>
+        </div>
+        <div class="loading-screen__text" style="font-size:0.625rem;opacity:0.5">Initializing subsystems...</div>
+    </div>
+
+    <!-- 🧭 STICKY NAV (erscheint beim Scrollen) -->
+    <nav id="site-nav" class="site-nav" aria-label="Hauptnavigation">
+        <div class="site-nav__inner">
+            <span class="site-nav__brand">Die Zockerstube</span>
+            <div class="site-nav__links">
+                <a href="#about" class="site-nav__link">About</a>
+                <a href="#hall-of-fame" class="site-nav__link">Games</a>
+                <a href="#arsenal" class="site-nav__link">Arsenal</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 🖥️ TERMINAL CONSOLE (QUAKE STYLE) -->
+    <div id="terminal-overlay" class="terminal" role="dialog" aria-label="Terminal">
+        <div class="terminal__header">
             <span>TERMINAL v1.0.4 [ROOT]</span>
             <span>PRESS ESC TO CLOSE</span>
         </div>
-        
-        <!-- Output Area -->
-        <div id="terminal-output" class="flex-1 p-4 overflow-y-auto space-y-1 text-neon-green/80">
-            <div class="opacity-50">Microsoft Windows [Version 11.0.22631.3007]</div>
-            <div class="opacity-50">(c) Microsoft Corporation. All rights reserved.</div>
+        <div id="terminal-output" class="terminal__output">
+            <div style="opacity:0.5">Microsoft Windows [Version 11.0.22631.3007]</div>
+            <div style="opacity:0.5">(c) Microsoft Corporation. All rights reserved.</div>
             <br>
-            <div>Welcome to SYSTEM_ROOT. Type <span class="text-white">'help'</span> for a list of commands.</div>
+            <div>Welcome to SYSTEM_ROOT. Type <span style="color:#fff">'help'</span> for a list of commands.</div>
             <br>
         </div>
-
-        <!-- Input Area -->
-        <div class="p-4 bg-zinc-900/50 flex items-center gap-2 border-t border-zinc-800">
-            <span class="text-neon-pink font-bold">visitor@mr-rioes:~$</span>
-            <input type="text" id="terminal-input" class="bg-transparent border-none outline-none text-white w-full font-mono caret-neon-green" autocomplete="off" spellcheck="false">
+        <div class="terminal__input-area">
+            <span class="terminal__prompt">visitor@mr-rioes:~$</span>
+            <input type="text" id="terminal-input" class="terminal__input" autocomplete="off" spellcheck="false" aria-label="Terminal Eingabe">
         </div>
     </div>
 
-    <!-- MATRIX CANVAS (Hidden by default) -->
-    <canvas id="matrix-canvas" class="fixed inset-0 z-[400] hidden bg-black cursor-pointer"></canvas>
+    <!-- 🐇 MATRIX CANVAS (Hidden by default) -->
+    <canvas id="matrix-canvas" style="position:fixed;inset:0;z-index:400;display:none;background:#000;cursor:pointer"></canvas>
 
-    <!-- 
-    =======================================================================
-    🌌 HINTERGRUND-EBENE
-    Alles was hier drin ist, liegt HINTER dem Text.
-    =======================================================================
-    -->
-    <div class="fixed inset-0 pointer-events-none z-0">
-        <!-- 
-            Das Gitter. 
-            opacity-50: 50% Deckkraft (gut sichtbar).
-            scale-150: Etwas vergrößert.
-            rotate-x-12: Leicht nach hinten gekippt für Tiefe.
-        -->
-        <div class="absolute inset-0 retro-grid opacity-50 transform scale-150 origin-top rotate-x-12"></div>
-        
-        <!-- Ein sanfter schwarzer Verlauf von oben nach unten, damit das Gitter in der Ferne verschwindet -->
-        <div class="absolute inset-0 bg-gradient-to-b from-transparent via-bg-dark/80 to-bg-dark z-0"></div>
-        
-        <!-- 💡 SPOTLIGHT: Die Taschenlampe am Mauszeiger -->
-        <div id="spotlight" class="absolute inset-0 z-0 bg-[radial-gradient(circle_at_var(--x,_50%)_var(--y,_50%),rgba(0,255,255,0.15)_0%,transparent_50%)] opacity-0 transition-opacity duration-500"></div>
-        
-        <!-- Scanlines: Die alten TV-Streifen für Retro-Feeling -->
-        <div class="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_4px,3px_100%] opacity-20 z-10 w-full h-full pointer-events-none"></div>
+    <!-- 🌌 HINTERGRUND-EBENE -->
+    <div class="bg-layer">
+        <div class="bg-layer__grid retro-grid" style="transform:scale(1.5) rotateX(12deg);transform-origin:top"></div>
+        <div class="bg-layer__fade"></div>
+        <div id="spotlight" class="spotlight" style="position:absolute;inset:0;z-index:0"></div>
+        <div class="bg-layer__scanlines scanlines"></div>
     </div>
 
-    <!-- 
-    =======================================================================
-    📦 HAUPT-INHALT
-    Hier beginnt der eigentliche Inhalt der Seite.
-    =======================================================================
-    -->
-    <main class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-24 flex-grow">
+    <!-- 📦 HAUPT-INHALT -->
+    <main class="main-content container">
 
-        <!-- HEADER: Profilbild & Titel -->
-        <section class="flex flex-col items-center text-center space-y-8 tracking-wide pt-12">
-            <div class="relative group cursor-pointer">
-                <!-- Avatar Glühen (Pulsierend) -->
-                <div class="absolute -inset-1 rounded-full bg-gradient-to-r from-neon-blue to-neon-purple opacity-75 blur-lg group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-pulse"></div>
-                <!-- Das eigentliche Bild (wird von UI Avatars generiert, bis du ein echtes hast) -->
-                <img src="https://ui-avatars.com/api/?name=Mr+Ri%C3%B6s&background=09090b&color=00FFFF&size=256&font-size=0.3" alt="Mr.Riös" class="relative w-32 h-32 md:w-48 md:h-48 rounded-full border-2 border-slate-800 object-cover transform transition duration-500 hover:rotate-6 hover:scale-105 shadow-2xl">
+        <!-- ═══════════ HEADER: Profilbild & Titel ═══════════ -->
+        <section class="section" style="text-align:center;padding-top:3rem" data-reveal>
+            <div style="position:relative;display:inline-block;cursor:pointer" class="group">
+                <!-- Avatar Glow -->
+                <div style="position:absolute;inset:-4px;border-radius:9999px;background:linear-gradient(to right,var(--color-neon-blue),var(--color-neon-purple));opacity:0.75;filter:blur(16px)" class="animate-pulse-glow"></div>
+                <img src="https://ui-avatars.com/api/?name=Mr+Ri%C3%B6s&background=09090b&color=00FFFF&size=256&font-size=0.3"
+                     alt="Mr.Riös Avatar"
+                     style="position:relative;width:8rem;height:8rem;border-radius:9999px;border:2px solid var(--border-default);object-fit:cover;box-shadow:var(--shadow-panel);transition:transform var(--transition-slow)"
+                     onmouseenter="this.style.transform='rotate(6deg) scale(1.05)'"
+                     onmouseleave="this.style.transform=''">
             </div>
 
-            <div class="space-y-4">
-                <!-- Der Titel mit Glitch-Effekt beim Drüberfahren -->
-                <h1 class="text-4xl md:text-6xl font-display text-white glitch-hover cursor-default" data-text="Die Zockerstube">Die Zockerstube</h1>
-                <p class="text-neon-blue font-mono text-lg md:text-xl tracking-widest uppercase">&lt; Home of StelltDichAchtung /&gt;</p>
+            <div style="margin-top:2rem" data-reveal data-reveal-delay="1">
+                <h1 class="hero-gradient-text glitch-hover"
+                    style="font-family:var(--font-display);font-size:clamp(1.5rem,5vw,3.75rem);cursor:default;margin:0"
+                    data-text="Die Zockerstube">
+                    Die Zockerstube
+                </h1>
+                <p style="color:var(--color-neon-blue);font-family:var(--font-mono);font-size:clamp(0.875rem,2vw,1.25rem);letter-spacing:0.2em;text-transform:uppercase;margin-top:1rem">
+                    &lt; Home of StelltDichAchtung /&gt;
+                </p>
             </div>
-            
-            <!-- Die kleinen Link-Buttons oben -->
-            <div class="flex flex-wrap justify-center gap-4 text-sm font-mono">
-               <a href="https://www.twitch.tv/stelltdichachtung/about" target="_blank" class="px-6 py-2 glass-panel rounded-full transition-all duration-300 border-transparent hover-twitch flex items-center gap-2">
-                   <i class="fa-brands fa-twitch"></i> Twitch
-               </a>
-               <a href="https://steamcommunity.com/id/mr-rioes/" target="_blank" class="px-6 py-2 glass-panel rounded-full transition-all duration-300 border-transparent hover-steam flex items-center gap-2">
-                   <i class="fa-brands fa-steam"></i> Steam
-               </a>
-               <a href="https://app.trakt.tv/profile/spezialzt" target="_blank" class="px-6 py-2 glass-panel rounded-full transition-all duration-300 border-transparent hover-trakt flex items-center gap-2">
-                   <i class="fa-solid fa-tv"></i> Trakt
-               </a>
-               <a href="https://www.last.fm/de/user/spezialzt" target="_blank" class="px-6 py-2 glass-panel rounded-full transition-all duration-300 border-transparent hover-lastfm flex items-center gap-2">
-                   <i class="fa-brands fa-lastfm"></i> Last.fm
-               </a>
+
+            <!-- Link Pills -->
+            <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:1rem;margin-top:2rem;font-size:0.875rem" data-reveal data-reveal-delay="2">
+                <a href="https://www.twitch.tv/stelltdichachtung/about" target="_blank" class="glass-panel nav-pill">
+                    <i class="fa-brands fa-twitch"></i> Twitch
+                </a>
+                <a href="https://steamcommunity.com/id/mr-rioes/" target="_blank" class="glass-panel nav-pill">
+                    <i class="fa-brands fa-steam"></i> Steam
+                </a>
+                <a href="https://app.trakt.tv/profile/spezialzt" target="_blank" class="glass-panel nav-pill">
+                    <i class="fa-solid fa-tv"></i> Trakt
+                </a>
+                <a href="https://www.last.fm/de/user/spezialzt" target="_blank" class="glass-panel nav-pill">
+                    <i class="fa-brands fa-lastfm"></i> Last.fm
+                </a>
             </div>
         </section>
 
-        <!-- ÜBER MICH & STATISTIKEN -->
-        <section class="glass-panel p-8 md:p-12 rounded-2xl relative overflow-hidden group border-t-2 border-t-neon-blue/30">
-            <!-- Hintergrund Icon (Deko) -->
-            <div class="absolute top-0 right-0 p-4 opacity-20 text-6xl text-neon-blue">
+        <!-- ═══════════ ÜBER MICH & STATISTIKEN ═══════════ -->
+        <section id="about" class="section glass-panel glass-panel--accent" style="padding:2rem;position:relative;overflow:hidden" data-reveal>
+            <!-- Deko Icon -->
+            <div style="position:absolute;top:0;right:0;padding:1rem;opacity:0.2;font-size:4rem;color:var(--color-neon-blue)">
                 <i class="fa-solid fa-user-astronaut"></i>
             </div>
-            
-            <h2 class="text-3xl font-bold font-header text-neon-blue mb-8 flex items-center gap-3">
-                <i class="fa-solid fa-terminal text-sm animate-pulse"></i>
+
+            <h2 style="font-size:1.875rem;font-weight:700;color:var(--color-neon-blue);margin:0 0 2rem;display:flex;align-items:center;gap:0.75rem">
+                <i class="fa-solid fa-terminal" style="font-size:0.875rem;animation:pulse-glow 2s ease-in-out infinite"></i>
                 ABOUT_ME.exe
             </h2>
 
-                <!-- NARRATIVE TEXT (Aus ich.md) -->
-                <div class="space-y-6">
-                    <p>
-                        <strong class="text-white text-lg">Wer ich bin.</strong><br>
-                        Es ist schwer, 21 Jahre als <strong class="text-neon-blue">Fallschirmjäger Offizier</strong> und die Seele eines "Meme Lords" in einen Satz zu pressen. Mein Leben ist eine Studie in Kontrasten. Ich bin ein Mann der Struktur, der das Chaos braucht.
-                    </p>
-                    <p>
-                        Man sagt mir nach, meine Stimme sei mein markantestes Merkmal – tief, dunkel, wortgewandt. Sie mag auf den ersten Moment einschüchtern, doch wer genau hinhört, merkt schnell: Sie wird genutzt, um zu helfen, nicht um zu herrschen. Ich bin eloquent, manchmal direkt, aber immer mit dem Ziel, mein Gegenüber weiterzubringen.
-                    </p>
-                    <p>
-                        Diese Philosophie überträgt sich 1:1 in meine digitale Existenz. Wenn ich Code schreibe – C#, Angular, komplexe Backends – dann bin ich kein Künstler, der auf die Muse wartet. Ich bin Handwerker. Code muss stehen wie eine Eins. Er muss funktionieren, skalieren und "Bugs" sind persönliche Beleidigungen, die ich, genau wie beim Kochen, am liebsten sofort aufesse.
-                    </p>
-                    <p>
-                         Vielleicht ist das der Grund, warum ich in <em class="text-neon-purple">EVE Online</em> kein einfacher Pilot geblieben bin. Als <strong class="text-white">"Lord of War"</strong> habe ich gelernt, dass der wahre Krieg in den Spreadsheets gewonnen wird. Wer Supercapitals fliegt, hat das Spiel verstanden; wer aber die Logistik dahinter kontrolliert, hat die Macht. 
-                    </p>
-                    <p>
-                        Doch bei all der High-Tech, den 500 Stunden in <em class="text-neon-purple">Helldivers 2</em> und der Liebe zu <em>Trentemøller</em> und <em>Sinatra</em>: Mein Endgame ist simpel. Ich suche <strong class="text-neon-blue">"Peace of Mind"</strong>. Ich will die Freiheit haben, spontan das zu tun, was mich erfüllt.
-                    </p>
-                    <p class="font-bold text-white italic border-l-4 border-neon-purple pl-4 my-6">
-                        "Führen durch Vorbild."<br>
-                        <span class="text-sm font-normal text-slate-400 not-italic">Ruhm ist laut. Erfolg ist leise.</span>
-                    </p>
-                </div>
+            <!-- Narrative Text -->
+            <div style="display:flex;flex-direction:column;gap:1.5rem;line-height:1.8">
+                <p>
+                    <strong style="color:#fff;font-size:1.125rem">Wer ich bin.</strong><br>
+                    Es ist schwer, 21 Jahre als <strong style="color:var(--color-neon-blue)">Fallschirmjäger Offizier</strong> und die Seele eines "Meme Lords" in einen Satz zu pressen. Mein Leben ist eine Studie in Kontrasten. Ich bin ein Mann der Struktur, der das Chaos braucht.
+                </p>
+                <p>
+                    Man sagt mir nach, meine Stimme sei mein markantestes Merkmal – tief, dunkel, wortgewandt. Sie mag auf den ersten Moment einschüchtern, doch wer genau hinhört, merkt schnell: Sie wird genutzt, um zu helfen, nicht um zu herrschen. Ich bin eloquent, manchmal direkt, aber immer mit dem Ziel, mein Gegenüber weiterzubringen.
+                </p>
+                <p>
+                    Diese Philosophie überträgt sich 1:1 in meine digitale Existenz. Wenn ich Code schreibe – C#, Angular, komplexe Backends – dann bin ich kein Künstler, der auf die Muse wartet. Ich bin Handwerker. Code muss stehen wie eine Eins. Er muss funktionieren, skalieren und "Bugs" sind persönliche Beleidigungen, die ich, genau wie beim Kochen, am liebsten sofort aufesse.
+                </p>
+                <p>
+                    Vielleicht ist das der Grund, warum ich in <em style="color:var(--color-neon-purple)">EVE Online</em> kein einfacher Pilot geblieben bin. Als <strong style="color:#fff">"Lord of War"</strong> habe ich gelernt, dass der wahre Krieg in den Spreadsheets gewonnen wird. Wer Supercapitals fliegt, hat das Spiel verstanden; wer aber die Logistik dahinter kontrolliert, hat die Macht.
+                </p>
+                <p>
+                    Doch bei all der High-Tech, den 500 Stunden in <em style="color:var(--color-neon-purple)">Helldivers 2</em> und der Liebe zu <em>Trentemøller</em> und <em>Sinatra</em>: Mein Endgame ist simpel. Ich suche <strong style="color:var(--color-neon-blue)">"Peace of Mind"</strong>. Ich will die Freiheit haben, spontan das zu tun, was mich erfüllt.
+                </p>
+                <p style="font-weight:700;color:#fff;font-style:italic;border-left:4px solid var(--color-neon-purple);padding-left:1rem;margin:1.5rem 0">
+                    "Führen durch Vorbild."<br>
+                    <span style="font-size:0.875rem;font-weight:400;color:var(--text-secondary);font-style:normal">Ruhm ist laut. Erfolg ist leise.</span>
+                </p>
+            </div>
 
-            <!-- Stats Grid (Die XP-Leiste) -->
-            <div class="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
-                <!-- Einzelne Statistik-Boxen -->
-                <div class="bg-black/40 p-3 rounded border border-zinc-800 flex flex-col items-center justify-center hover:border-neon-blue transition duration-300">
-                    <span class="text-xs text-slate-500 uppercase tracking-wider">Level</span>
-                    <span class="text-2xl font-bold text-white text-shadow-neon">101</span>
+            <!-- Stats Grid -->
+            <div class="grid-2-4" style="margin-top:2rem" data-reveal>
+                <div class="stat-box">
+                    <span class="stat-box__label">Level</span>
+                    <span class="stat-box__value text-neon">101</span>
                 </div>
-                 <div class="bg-black/40 p-3 rounded border border-zinc-800 flex flex-col items-center justify-center hover:border-neon-purple transition duration-300">
-                    <span class="text-xs text-slate-500 uppercase tracking-wider">Completion</span>
-                    <span class="text-2xl font-bold text-neon-purple">97%</span>
+                <div class="stat-box stat-box--purple">
+                    <span class="stat-box__label">Completion</span>
+                    <span class="stat-box__value stat-box__value--neon">97%</span>
                 </div>
-                 <div class="bg-black/40 p-3 rounded border border-zinc-800 flex flex-col items-center justify-center hover:border-neon-blue transition duration-300">
-                    <span class="text-xs text-slate-500 uppercase tracking-wider">Perfect Games</span>
-                    <span class="text-2xl font-bold text-white">326</span>
+                <div class="stat-box">
+                    <span class="stat-box__label">Perfect Games</span>
+                    <span class="stat-box__value">326</span>
                 </div>
-                 <div class="bg-black/40 p-3 rounded border border-zinc-800 flex flex-col items-center justify-center hover:border-neon-purple transition duration-300">
-                    <span class="text-xs text-slate-500 uppercase tracking-wider">Badges</span>
-                    <span class="text-2xl font-bold text-white">135</span>
-                </div>
+                <div class="stat-box stat-box--purple">
+                    <span class="stat-box__label">Badges</span>
+                    <span class="stat-box__value">135</span>
                 </div>
             </div>
 
-            <!-- DOSSIER BUTTON (Zum Öffnen der Akte) -->
-            <div class="mt-8 text-center">
-                <button onclick="toggleModal('dossier')" class="group relative inline-flex items-center gap-3 px-8 py-3 bg-zinc-900 border border-zinc-700 hover:border-neon-blue rounded transition-all duration-300 overflow-hidden">
-                    <div class="absolute inset-0 bg-neon-blue/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
-                    <i class="fa-solid fa-folder-open text-neon-blue group-hover:animate-bounce"></i>
-                    <span class="font-mono text-slate-300 group-hover:text-white relative z-10 uppercase tracking-widest text-sm">Open Personnel Dossier</span>
+            <!-- Dossier Button -->
+            <div style="margin-top:2rem;text-align:center">
+                <button onclick="toggleModal('dossier')" class="btn">
+                    <div class="btn__bg"></div>
+                    <i class="fa-solid fa-folder-open" style="color:var(--color-neon-blue)"></i>
+                    <span style="position:relative;z-index:1">Open Personnel Dossier</span>
                 </button>
             </div>
         </section>
 
-        <!-- HALL OF FAME (Lieblingsspiele) -->
-        <section class="space-y-8">
-            <div class="flex items-center justify-between mb-8">
-                <h2 class="text-3xl font-bold font-header text-neon-purple flex items-center gap-3">
+        <!-- ═══════════ HALL OF FAME (Lieblingsspiele) ═══════════ -->
+        <section id="hall-of-fame" class="section" data-reveal>
+            <div class="section-header">
+                <h2 style="font-size:1.875rem;font-weight:700;color:var(--color-neon-purple);display:flex;align-items:center;gap:0.75rem;margin:0">
                     <i class="fa-solid fa-gamepad"></i>
                     HALL_OF_FAME
                 </h2>
-                <!-- Der lila Strich rechts neben der Überschrift -->
-                <div class="h-px flex-1 bg-gradient-to-r from-neon-purple/50 to-transparent ml-6"></div>
+                <div class="section-header__line"></div>
             </div>
-
-            <!-- Das Grid für die Spiele-Cover (wird per JavaScript gefüllt) -->
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-6" id="games-grid">
-                <!-- Hier kommen die Spiele rein -->
-            </div>
+            <!-- Grid wird per JavaScript (games.js) gefüllt -->
+            <div class="grid-2-4" id="games-grid"></div>
         </section>
 
-        <!-- DAS ARSENAL (Hardware) -->
-        <section>
-            <h2 class="text-2xl font-display text-white mb-8 flex items-center gap-3">
-                <i class="fa-solid fa-microchip text-neon-blue"></i>
+        <!-- ═══════════ DAS ARSENAL (Hardware) ═══════════ -->
+        <section id="arsenal" class="section" data-reveal>
+            <h2 style="font-family:var(--font-display);color:#fff;font-size:1.25rem;margin:0 0 2rem;display:flex;align-items:center;gap:0.75rem">
+                <i class="fa-solid fa-microchip" style="color:var(--color-neon-blue)"></i>
                 The Arsenal
             </h2>
 
-            <div class="space-y-8">
-                <!-- Die zwei Haupt-PCs -->
-                 <div class="grid md:grid-cols-2 gap-8">
-                    <!-- Haupt Rechner -->
-                    <div class="glass-panel rounded-xl overflow-hidden group">
-                        <div class="bg-zinc-800/50 p-4 border-b border-zinc-700 flex justify-between items-center group-hover:bg-zinc-800/80 transition-colors">
-                             <h3 class="font-bold font-mono text-neon-blue">Main_Rig::System</h3>
-                             <i class="fa-solid fa-desktop text-slate-500"></i>
-                        </div>
-                        <div class="p-6 space-y-4 text-sm">
-                            <a href="https://www.amazon.de/s?k=Intel+Xeon+W9+3495X" target="_blank" class="flex gap-4 items-center group/item hover:bg-white/5 p-2 rounded transition">
-                                <i class="fa-solid fa-microchip text-2xl text-slate-600 group-hover/item:text-neon-blue transition-colors"></i>
-                                <div>
-                                    <div class="text-slate-200 font-bold">Intel Xeon W9 3495X</div>
-                                    <div class="text-xs text-slate-500 font-mono">Process Unit</div>
-                                </div>
-                            </a>
-                            <a href="https://www.amazon.de/s?k=ASUS+ProArt+GeForce+RTX+4080+OC" target="_blank" class="flex gap-4 items-center group/item hover:bg-white/5 p-2 rounded transition">
-                                <i class="fa-solid fa-memory text-2xl text-slate-600 group-hover/item:text-neon-blue transition-colors"></i>
-                                 <div>
-                                    <div class="text-slate-200 font-bold">ASUS ProArt RTX 4080 OC</div>
-                                    <div class="text-xs text-slate-500 font-mono">Graphics Unit</div>
-                                </div>
-                            </a>
-                            <div class="flex gap-4 items-center p-2">
-                                <i class="fa-solid fa-server text-2xl text-slate-600"></i>
-                                 <div>
-                                    <div class="text-slate-200 font-bold">128GB Kingston FURY Pro</div>
-                                    <div class="text-xs text-slate-500 font-mono">DDR5-6400 ECC</div>
-                                </div>
+            <!-- Row 1: Main Rigs -->
+            <div class="grid-2" style="margin-bottom:2rem" data-reveal>
+                <!-- Haupt Rechner -->
+                <div class="glass-panel hw-card">
+                    <div class="hw-card__header">
+                        <h3 class="hw-card__title">Main_Rig::System</h3>
+                        <i class="fa-solid fa-desktop" style="color:var(--text-muted)"></i>
+                    </div>
+                    <div class="hw-card__body">
+                        <a href="https://www.amazon.de/s?k=Intel+Xeon+W9+3495X" target="_blank" class="hw-card__item">
+                            <i class="fa-solid fa-microchip hw-card__item-icon"></i>
+                            <div>
+                                <div class="hw-card__item-name">Intel Xeon W9 3495X</div>
+                                <div class="hw-card__item-sub">Process Unit</div>
+                            </div>
+                        </a>
+                        <a href="https://www.amazon.de/s?k=ASUS+ProArt+GeForce+RTX+4080+OC" target="_blank" class="hw-card__item">
+                            <i class="fa-solid fa-memory hw-card__item-icon"></i>
+                            <div>
+                                <div class="hw-card__item-name">ASUS ProArt RTX 4080 OC</div>
+                                <div class="hw-card__item-sub">Graphics Unit</div>
+                            </div>
+                        </a>
+                        <div class="hw-card__item">
+                            <i class="fa-solid fa-server hw-card__item-icon"></i>
+                            <div>
+                                <div class="hw-card__item-name">128GB Kingston FURY Pro</div>
+                                <div class="hw-card__item-sub">DDR5-6400 ECC</div>
                             </div>
                         </div>
                     </div>
-    
-                    <!-- Streaming PC -->
-                    <div class="glass-panel rounded-xl overflow-hidden group">
-                        <div class="bg-zinc-800/50 p-4 border-b border-zinc-700 flex justify-between items-center group-hover:bg-zinc-800/80 transition-colors">
-                             <h3 class="font-bold font-mono text-neon-blue">Stream_Deck::NUC</h3>
-                             <i class="fa-solid fa-satellite-dish text-slate-500"></i>
-                        </div>
-                         <div class="p-6 space-y-4 text-sm">
-                            <a href="https://www.amazon.de/s?k=ASUS+NUC+14+Enthusiast" target="_blank" class="flex gap-4 items-center group/item hover:bg-white/5 p-2 rounded transition">
-                                <i class="fa-solid fa-box-open text-2xl text-slate-600 group-hover/item:text-neon-blue transition-colors"></i>
-                                <div>
-                                    <div class="text-slate-200 font-bold">ASUS NUC 14 Enthusiast</div>
-                                    <div class="text-xs text-slate-500 font-mono">Compact System</div>
-                                </div>
-                            </a>
-                              <div class="flex gap-4 items-center p-2">
-                                <i class="fa-solid fa-database text-2xl text-slate-600"></i>
-                                 <div>
-                                    <div class="text-slate-200 font-bold">6TB NVMe Storage</div>
-                                    <div class="text-xs text-slate-500 font-mono">Kingston Renegade</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                 </div>
-                 
-                 <!-- Row 2: Projects & Storage (The new Stuff) -->
-                 <div class="grid md:grid-cols-2 gap-8">
-                     <!-- Project Golden Art -->
-                    <div class="glass-panel rounded-xl overflow-hidden group border-amber-500/20">
-                        <div class="bg-black/80 p-4 border-b border-amber-900/30 flex justify-between items-center group-hover:bg-amber-950/30 transition-colors">
-                             <h3 class="font-bold font-mono text-amber-500">Project_Golden_Art::Build</h3>
-                             <i class="fa-solid fa-gem text-amber-500 animate-pulse"></i>
-                        </div>
-                        <div class="p-6 space-y-4 text-sm">
-                            <div class="text-xs text-amber-300/60 font-mono mb-2">>> STATUS: CONSTRUCTION (Anti-RGB Protocol)</div>
-                            <div class="flex gap-4 items-center p-2">
-                                <i class="fa-solid fa-palette text-2xl text-amber-700"></i>
-                                 <div>
-                                    <div class="text-slate-200 font-bold">ASUS ProArt Ecosystem</div>
-                                    <div class="text-xs text-slate-500 font-mono">Black / Gold / Wood</div>
-                                </div>
-                            </div>
-                            <div class="flex gap-4 items-center p-2">
-                                <i class="fa-solid fa-leaf text-2xl text-amber-700"></i>
-                                 <div>
-                                    <div class="text-slate-200 font-bold">Real Gold & Ash Wood</div>
-                                    <div class="text-xs text-slate-500 font-mono">Custom Materials</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                </div>
 
-                    <!-- The Datacenter -->
-                    <div class="glass-panel rounded-xl overflow-hidden group">
-                        <div class="bg-zinc-800/50 p-4 border-b border-zinc-700 flex justify-between items-center group-hover:bg-zinc-800/80 transition-colors">
-                             <h3 class="font-bold font-mono text-neon-blue">The_Datacenter::Cluster</h3>
-                             <i class="fa-solid fa-server text-slate-500"></i>
-                        </div>
-                         <div class="p-6 space-y-4 text-sm">
-                            <div class="flex gap-4 items-center p-2">
-                                <i class="fa-solid fa-building-shield text-2xl text-slate-600"></i>
-                                <div>
-                                    <div class="text-slate-200 font-bold">TrueNAS R20 Cluster</div>
-                                    <div class="text-xs text-slate-500 font-mono">24x WD 12TB Red Plus</div>
-                                </div>
+                <!-- Streaming PC -->
+                <div class="glass-panel hw-card">
+                    <div class="hw-card__header">
+                        <h3 class="hw-card__title">Stream_Deck::NUC</h3>
+                        <i class="fa-solid fa-satellite-dish" style="color:var(--text-muted)"></i>
+                    </div>
+                    <div class="hw-card__body">
+                        <a href="https://www.amazon.de/s?k=ASUS+NUC+14+Enthusiast" target="_blank" class="hw-card__item">
+                            <i class="fa-solid fa-box-open hw-card__item-icon"></i>
+                            <div>
+                                <div class="hw-card__item-name">ASUS NUC 14 Enthusiast</div>
+                                <div class="hw-card__item-sub">Compact System</div>
                             </div>
-                              <div class="flex gap-4 items-center p-2">
-                                <i class="fa-solid fa-hard-drive text-2xl text-slate-600"></i>
-                                 <div>
-                                    <div class="text-slate-200 font-bold">~288 TB Raw Capacity</div>
-                                    <div class="text-xs text-slate-500 font-mono">Data Hoarding Elite</div>
-                                </div>
+                        </a>
+                        <div class="hw-card__item">
+                            <i class="fa-solid fa-database hw-card__item-icon"></i>
+                            <div>
+                                <div class="hw-card__item-name">6TB NVMe Storage</div>
+                                <div class="hw-card__item-sub">Kingston Renegade</div>
                             </div>
                         </div>
                     </div>
-                 </div>
+                </div>
+            </div>
 
-                 <!-- Peripherie-Geräte (Maus, Tastatur etc.) -->
-                 <div class="glass-panel rounded-xl overflow-hidden">
-                    <div class="bg-zinc-800/50 p-4 border-b border-zinc-700">
-                         <h3 class="font-bold font-mono text-neon-blue mb-1">Peripherals::IO</h3>
-                         <p class="text-xs text-slate-500">Input/Output Devices & Streaming Gear</p>
+            <!-- Row 2: Projects & Storage -->
+            <div class="grid-2" style="margin-bottom:2rem" data-reveal>
+                <!-- Project Golden Art -->
+                <div class="glass-panel hw-card hw-card--golden">
+                    <div class="hw-card__header">
+                        <h3 class="hw-card__title">Project_Golden_Art::Build</h3>
+                        <i class="fa-solid fa-gem" style="color:#f59e0b;animation:pulse-glow 2s ease-in-out infinite"></i>
                     </div>
-                    <div class="p-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                        <!-- Apex 7 Pro -->
-                        <div class="bg-zinc-900/50 border border-zinc-800 rounded-lg p-3 hover:border-zinc-600 transition group cursor-default">
-                             <i class="fa-solid fa-keyboard text-slate-600 mb-2 group-hover:text-white transition-colors"></i>
-                             <div class="text-sm font-bold text-slate-300">Apex 7 Pro</div>
-                             <div class="text-[10px] text-slate-600 font-mono uppercase">Keyboard</div>
+                    <div class="hw-card__body">
+                        <div style="font-size:0.75rem;color:rgba(252,211,77,0.6);font-family:var(--font-mono);margin-bottom:0.5rem">&gt;&gt; STATUS: CONSTRUCTION (Anti-RGB Protocol)</div>
+                        <div class="hw-card__item">
+                            <i class="fa-solid fa-palette hw-card__item-icon"></i>
+                            <div>
+                                <div class="hw-card__item-name">ASUS ProArt Ecosystem</div>
+                                <div class="hw-card__item-sub">Black / Gold / Wood</div>
+                            </div>
                         </div>
-                        <!-- Rival 710 -->
-                        <div class="bg-zinc-900/50 border border-zinc-800 rounded-lg p-3 hover:border-zinc-600 transition group cursor-default">
-                             <i class="fa-solid fa-computer-mouse text-slate-600 mb-2 group-hover:text-white transition-colors"></i>
-                             <div class="text-sm font-bold text-slate-300">Rival 710</div>
-                             <div class="text-[10px] text-slate-600 font-mono uppercase">Mouse</div>
+                        <div class="hw-card__item">
+                            <i class="fa-solid fa-leaf hw-card__item-icon"></i>
+                            <div>
+                                <div class="hw-card__item-name">Real Gold & Ash Wood</div>
+                                <div class="hw-card__item-sub">Custom Materials</div>
+                            </div>
                         </div>
-                        <!-- Headset -->
-                        <div class="bg-zinc-900/50 border border-zinc-800 rounded-lg p-3 hover:border-zinc-600 transition group cursor-default">
-                             <i class="fa-solid fa-headphones text-slate-600 mb-2 group-hover:text-white transition-colors"></i>
-                             <div class="text-sm font-bold text-slate-300">Arctis Pro Wireless</div>
-                             <div class="text-[10px] text-slate-600 font-mono uppercase">Audio</div>
+                    </div>
+                </div>
+
+                <!-- The Datacenter -->
+                <div class="glass-panel hw-card">
+                    <div class="hw-card__header">
+                        <h3 class="hw-card__title">The_Datacenter::Cluster</h3>
+                        <i class="fa-solid fa-server" style="color:var(--text-muted)"></i>
+                    </div>
+                    <div class="hw-card__body">
+                        <div class="hw-card__item">
+                            <i class="fa-solid fa-building-shield hw-card__item-icon"></i>
+                            <div>
+                                <div class="hw-card__item-name">TrueNAS R20 Cluster</div>
+                                <div class="hw-card__item-sub">24x WD 12TB Red Plus</div>
+                            </div>
                         </div>
-                        <!-- Mixer -->
-                        <div class="bg-zinc-900/50 border border-zinc-800 rounded-lg p-3 hover:border-zinc-600 transition group cursor-default">
-                             <i class="fa-solid fa-sliders text-slate-600 mb-2 group-hover:text-white transition-colors"></i>
-                             <div class="text-sm font-bold text-slate-300">RØDECaster Pro II</div>
-                             <div class="text-[10px] text-slate-600 font-mono uppercase">Mixer</div>
+                        <div class="hw-card__item">
+                            <i class="fa-solid fa-hard-drive hw-card__item-icon"></i>
+                            <div>
+                                <div class="hw-card__item-name">~288 TB Raw Capacity</div>
+                                <div class="hw-card__item-sub">Data Hoarding Elite</div>
+                            </div>
                         </div>
-                        <!-- Stream Deck -->
-                        <div class="bg-zinc-900/50 border border-zinc-800 rounded-lg p-3 hover:border-zinc-600 transition group cursor-default">
-                             <i class="fa-solid fa-table-cells text-slate-600 mb-2 group-hover:text-white transition-colors"></i>
-                             <div class="text-sm font-bold text-slate-300">Stream Deck MK.2</div>
-                             <div class="text-[10px] text-slate-600 font-mono uppercase">Control</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Peripherals -->
+            <div class="glass-panel hw-card" data-reveal>
+                <div class="hw-card__header">
+                    <div>
+                        <h3 class="hw-card__title" style="margin-bottom:0.25rem">Peripherals::IO</h3>
+                        <p style="font-size:0.75rem;color:var(--text-muted);margin:0">Input/Output Devices & Streaming Gear</p>
+                    </div>
+                </div>
+                <div style="padding:1.5rem">
+                    <div class="grid-peripherals">
+                        <div class="peripheral-item">
+                            <i class="fa-solid fa-keyboard peripheral-item__icon"></i>
+                            <div class="peripheral-item__name">Apex 7 Pro</div>
+                            <div class="peripheral-item__type">Keyboard</div>
                         </div>
-                        <!-- Kamera -->
-                        <div class="bg-zinc-900/50 border border-zinc-800 rounded-lg p-3 hover:border-zinc-600 transition group cursor-default">
-                             <i class="fa-solid fa-camera text-slate-600 mb-2 group-hover:text-white transition-colors"></i>
-                             <div class="text-sm font-bold text-slate-300">Sony Alpha 7400</div>
-                             <div class="text-[10px] text-slate-600 font-mono uppercase">Vision</div>
+                        <div class="peripheral-item">
+                            <i class="fa-solid fa-computer-mouse peripheral-item__icon"></i>
+                            <div class="peripheral-item__name">Rival 710</div>
+                            <div class="peripheral-item__type">Mouse</div>
                         </div>
-                        <!-- Prompter -->
-                        <div class="bg-zinc-900/50 border border-zinc-800 rounded-lg p-3 hover:border-zinc-600 transition group cursor-default">
-                             <i class="fa-solid fa-closed-captioning text-slate-600 mb-2 group-hover:text-white transition-colors"></i>
-                             <div class="text-sm font-bold text-slate-300">Elgato Prompter</div>
-                             <div class="text-[10px] text-slate-600 font-mono uppercase">Teleprompter</div>
+                        <div class="peripheral-item">
+                            <i class="fa-solid fa-headphones peripheral-item__icon"></i>
+                            <div class="peripheral-item__name">Arctis Pro Wireless</div>
+                            <div class="peripheral-item__type">Audio</div>
                         </div>
-                        <!-- Licht -->
-                         <div class="bg-zinc-900/50 border border-zinc-800 rounded-lg p-3 hover:border-zinc-600 transition group cursor-default">
-                             <i class="fa-regular fa-lightbulb text-slate-600 mb-2 group-hover:text-white transition-colors"></i>
-                             <div class="text-sm font-bold text-slate-300">Elgato Keylights</div>
-                             <div class="text-[10px] text-slate-600 font-mono uppercase">Lighting</div>
+                        <div class="peripheral-item">
+                            <i class="fa-solid fa-sliders peripheral-item__icon"></i>
+                            <div class="peripheral-item__name">RØDECaster Pro II</div>
+                            <div class="peripheral-item__type">Mixer</div>
+                        </div>
+                        <div class="peripheral-item">
+                            <i class="fa-solid fa-table-cells peripheral-item__icon"></i>
+                            <div class="peripheral-item__name">Stream Deck MK.2</div>
+                            <div class="peripheral-item__type">Control</div>
+                        </div>
+                        <div class="peripheral-item">
+                            <i class="fa-solid fa-camera peripheral-item__icon"></i>
+                            <div class="peripheral-item__name">Sony Alpha 7400</div>
+                            <div class="peripheral-item__type">Vision</div>
+                        </div>
+                        <div class="peripheral-item">
+                            <i class="fa-solid fa-closed-captioning peripheral-item__icon"></i>
+                            <div class="peripheral-item__name">Elgato Prompter</div>
+                            <div class="peripheral-item__type">Teleprompter</div>
+                        </div>
+                        <div class="peripheral-item">
+                            <i class="fa-regular fa-lightbulb peripheral-item__icon"></i>
+                            <div class="peripheral-item__name">Elgato Keylights</div>
+                            <div class="peripheral-item__type">Lighting</div>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- FOOTER (Unten) -->
-        <footer class="border-t border-zinc-800 pt-12 pb-24 text-center mt-12 bg-black/40 backdrop-blur-sm rounded-xl p-4">
-             <!-- Social Media Buttons -->
-             <div class="flex justify-center flex-wrap gap-6 mb-8">
-                 <a href="https://www.twitch.tv/stelltdichachtung" target="_blank" class="w-12 h-12 rounded-full flex items-center justify-center bg-zinc-800 hover:scale-125 hover:shadow-[0_0_25px_rgba(145,70,255,0.8)] hover:z-10 transition-all duration-300 ease-out bg-twitch group border border-transparent hover:border-white/50">
-                    <i class="fa-brands fa-twitch text-xl group-hover:animate-pulse"></i>
-                 </a>
-                 <a href="https://steamcommunity.com/id/mr-rioes/" target="_blank" class="w-12 h-12 rounded-full flex items-center justify-center bg-zinc-800 hover:scale-125 hover:shadow-[0_0_25px_rgba(102,192,244,0.8)] hover:z-10 transition-all duration-300 ease-out bg-steam group border border-transparent hover:border-white/50">
-                    <i class="fa-brands fa-steam text-xl group-hover:rotate-12 transition-transform"></i>
-                 </a>
-                 <a href="https://www.last.fm/de/user/spezialzt" target="_blank" class="w-12 h-12 rounded-full flex items-center justify-center bg-zinc-800 hover:scale-125 hover:shadow-[0_0_25px_rgba(186,0,0,0.8)] hover:z-10 transition-all duration-300 ease-out bg-lastfm group border border-transparent hover:border-white/50">
-                    <i class="fa-brands fa-lastfm text-xl group-hover:animate-bounce"></i>
-                 </a>
-                 <a href="https://app.trakt.tv/profile/spezialzt" target="_blank" class="w-12 h-12 rounded-full flex items-center justify-center bg-zinc-800 hover:scale-125 hover:shadow-[0_0_25px_rgba(237,28,36,0.8)] hover:z-10 transition-all duration-300 ease-out bg-trakt group border border-transparent hover:border-white/50">
-                    <i class="fa-solid fa-tv text-lg group-hover:text-white"></i>
-                 </a>
-                 <!-- Platzhalter Links (YouTube / Discord) -->
-                 <a href="#" class="w-12 h-12 rounded-full flex items-center justify-center bg-zinc-800 hover:scale-125 hover:shadow-[0_0_25px_rgba(255,0,0,0.8)] hover:z-10 transition-all duration-300 ease-out bg-youtube group border border-transparent hover:border-white/50">
-                    <i class="fa-brands fa-youtube text-xl group-hover:text-white"></i>
-                 </a>
-                 <a href="#" class="w-12 h-12 rounded-full flex items-center justify-center bg-zinc-800 hover:scale-125 hover:shadow-[0_0_25px_rgba(88,101,242,0.8)] hover:z-10 transition-all duration-300 ease-out bg-discord group border border-transparent hover:border-white/50">
-                    <i class="fa-brands fa-discord text-xl group-hover:spin-slow"></i>
-                 </a>
-             </div>
-             
-             <p class="font-mono text-sm text-slate-500 mb-6 flex items-center justify-center gap-2">
-                 Coded by Mr.Riös with <i class="fa-solid fa-heart text-red-500 animate-pulse"></i> and lots of <i class="fa-solid fa-bolt text-yellow-500"></i> Energy-Drinks
-             </p>
+        <!-- ═══════════ FOOTER ═══════════ -->
+        <footer style="border-top:1px solid var(--border-default);padding:3rem 1rem 6rem;text-align:center;margin-top:3rem;background:var(--bg-card);backdrop-filter:blur(4px);border-radius:var(--radius-xl)" data-reveal>
+            <!-- Social Icons -->
+            <div style="display:flex;justify-content:center;flex-wrap:wrap;gap:1.5rem;margin-bottom:2rem">
+                <a href="https://www.twitch.tv/stelltdichachtung" target="_blank" class="social-icon bg-twitch social-icon--twitch" aria-label="Twitch">
+                    <i class="fa-brands fa-twitch"></i>
+                </a>
+                <a href="https://steamcommunity.com/id/mr-rioes/" target="_blank" class="social-icon bg-steam social-icon--steam" aria-label="Steam">
+                    <i class="fa-brands fa-steam"></i>
+                </a>
+                <a href="https://www.last.fm/de/user/spezialzt" target="_blank" class="social-icon bg-lastfm social-icon--lastfm" aria-label="Last.fm">
+                    <i class="fa-brands fa-lastfm"></i>
+                </a>
+                <a href="https://app.trakt.tv/profile/spezialzt" target="_blank" class="social-icon bg-trakt social-icon--trakt" aria-label="Trakt">
+                    <i class="fa-solid fa-tv"></i>
+                </a>
+                <a href="#" class="social-icon bg-youtube social-icon--youtube" aria-label="YouTube">
+                    <i class="fa-brands fa-youtube"></i>
+                </a>
+                <a href="#" class="social-icon bg-discord social-icon--discord" aria-label="Discord">
+                    <i class="fa-brands fa-discord"></i>
+                </a>
+            </div>
 
-             <!-- 🌓 THEME TOGGLE (Schicker 3-Wege Schalter) -->
-             <div class="flex justify-center mb-8">
-                 <div class="glass-panel p-1 rounded-full flex gap-1 items-center bg-black/50 backdrop-blur-md border border-zinc-700/50" id="theme-toggle-container">
-                     <!-- LIGHT -->
-                     <button onclick="switchTheme('light')" class="theme-btn w-10 h-10 flex items-center justify-center text-slate-500 hover:text-yellow-400" data-theme="light" title="Light Mode">
-                         <i class="fa-solid fa-sun text-lg"></i>
-                     </button>
-                     <!-- SYSTEM -->
-                     <button onclick="switchTheme('system')" class="theme-btn w-10 h-10 flex items-center justify-center text-slate-500 hover:text-white" data-theme="system" title="System Standard">
-                         <i class="fa-solid fa-desktop text-sm"></i>
-                     </button>
-                     <!-- DARK -->
-                     <button onclick="switchTheme('dark')" class="theme-btn w-10 h-10 flex items-center justify-center text-slate-500 hover:text-indigo-400" data-theme="dark" title="Dark Mode">
-                         <i class="fa-solid fa-moon text-sm"></i>
-                     </button>
-                 </div>
-                 
-                 <!-- SOUND TOGGLE -->
-                 <div class="glass-panel p-1 rounded-full flex items-center bg-black/50 backdrop-blur-md border border-zinc-700/50 ML-4" id="sound-toggle-container" style="margin-left: 1rem;">
-                     <button onclick="toggleSound()" id="btn-sound" class="w-10 h-10 flex items-center justify-center text-slate-500 hover:text-neon-blue transition-colors" title="Audio Feedback Toggle">
-                         <i class="fa-solid fa-volume-high text-sm"></i>
-                     </button>
-                 </div>
-             </div>
-             
-             <!-- Rechtliches (Öffnet Popups) -->
-             <div class="flex justify-center gap-6 text-xs font-mono text-slate-600">
-                 <button onclick="toggleModal('impressum')" class="hover:text-neon-blue transition underline decoration-dotted">Impressum</button>
-                 <span>|</span>
-                 <button onclick="toggleModal('privacy')" class="hover:text-neon-blue transition underline decoration-dotted">Datenschutz</button>
-             </div>
+            <p style="font-family:var(--font-mono);font-size:0.875rem;color:var(--text-muted);margin-bottom:1.5rem;display:flex;align-items:center;justify-content:center;gap:0.5rem">
+                Coded by Mr.Riös with <i class="fa-solid fa-heart" style="color:#ef4444;animation:pulse-glow 2s ease-in-out infinite"></i> and lots of <i class="fa-solid fa-bolt" style="color:#eab308"></i> Energy-Drinks
+            </p>
+
+            <!-- Theme & Sound Toggle -->
+            <div style="display:flex;justify-content:center;margin-bottom:2rem">
+                <div class="theme-toggle">
+                    <button onclick="switchTheme('light')" class="theme-toggle__btn" data-theme="light" title="Light Mode">
+                        <i class="fa-solid fa-sun" style="font-size:1.125rem"></i>
+                    </button>
+                    <button onclick="switchTheme('system')" class="theme-toggle__btn" data-theme="system" title="System Standard">
+                        <i class="fa-solid fa-desktop" style="font-size:0.875rem"></i>
+                    </button>
+                    <button onclick="switchTheme('dark')" class="theme-toggle__btn" data-theme="dark" title="Dark Mode">
+                        <i class="fa-solid fa-moon" style="font-size:0.875rem"></i>
+                    </button>
+                </div>
+                <div class="sound-toggle">
+                    <button onclick="toggleSound()" id="btn-sound" class="sound-toggle__btn" title="Audio Feedback Toggle">
+                        <i class="fa-solid fa-volume-high" style="font-size:0.875rem"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Legal -->
+            <div style="display:flex;justify-content:center;gap:1.5rem;font-size:0.75rem;font-family:var(--font-mono);color:var(--text-faint)">
+                <button onclick="toggleModal('impressum')" style="background:none;border:none;color:inherit;cursor:pointer;text-decoration:underline;text-decoration-style:dotted;font-family:inherit;font-size:inherit;padding:0;transition:color var(--transition-fast)" onmouseenter="this.style.color='var(--color-neon-blue)'" onmouseleave="this.style.color=''">Impressum</button>
+                <span>|</span>
+                <button onclick="toggleModal('privacy')" style="background:none;border:none;color:inherit;cursor:pointer;text-decoration:underline;text-decoration-style:dotted;font-family:inherit;font-size:inherit;padding:0;transition:color var(--transition-fast)" onmouseenter="this.style.color='var(--color-neon-blue)'" onmouseleave="this.style.color=''">Datenschutz</button>
+            </div>
         </footer>
 
     </main>
 
-    <!-- 
-    📻 FLOATING WIDGET (WINAMP STYLE)
-    Das kleine "Now Playing" Fenster unten rechts.
-    -->
-    <!-- 
-    📻 FLOATING WIDGET (WINAMP STYLE DELUXE)
-    Das "Now Playing" Fenster unten rechts.
-    Jetzt mit Cover-Art Unterstützung!
-    -->
-    <div id="status-widget" class="fixed bottom-4 right-4 md:bottom-8 md:right-8 z-40 w-80 glass-panel p-0 rounded-xl border border-zinc-700/50 shadow-2xl transition-all duration-500 ease-out translate-y-0 opacity-100 bg-black/90 flex flex-col group overflow-hidden h-24">
-        
-        <!-- Header (Cover + Info) -->
-        <div class="flex h-24 shrink-0 relative">
-            <!-- Toggle Button (Expand) -->
-            <button onclick="toggleWidget()" class="absolute top-2 right-2 z-20 text-slate-500 hover:text-white transition-colors p-1" title="Verlauf anzeigen">
-                <i id="widget-toggle-icon" class="fa-solid fa-chevron-up text-xs"></i>
+    <!-- 📻 FLOATING WIDGET (WINAMP STYLE) -->
+    <div id="status-widget" class="widget widget--collapsed">
+        <div class="widget__header">
+            <button onclick="toggleWidget()" class="widget__toggle" title="Verlauf anzeigen">
+                <i id="widget-toggle-icon" class="fa-solid fa-chevron-up" style="font-size:0.75rem"></i>
             </button>
-
-            <!-- Album Cover -->
-            <div class="relative w-24 h-24 shrink-0 bg-zinc-800">
-                 <img id="widget-art" src="" alt="Cover" class="w-full h-full object-cover opacity-0 transition-opacity duration-700">
-                 <!-- Fallback Vinyl Icon -->
-                 <div id="widget-art-fallback" class="absolute inset-0 flex items-center justify-center text-zinc-600">
-                     <i class="fa-solid fa-compact-disc text-4xl animate-spin-slow"></i>
-                 </div>
+            <div class="widget__art">
+                <img id="widget-art" src="" alt="Cover" style="opacity:0">
+                <div id="widget-art-fallback" class="widget__art-fallback">
+                    <i class="fa-solid fa-compact-disc animate-spin-slow" style="font-size:2.25rem"></i>
+                </div>
             </div>
-
-            <!-- Info Area (Clickable for YT Music) -->
-            <div class="flex-1 p-3 flex flex-col justify-center min-w-0 relative cursor-pointer group/info" onclick="openYtMusic()">
-                 <!-- Visualizer Overlay -->
-                 <div class="absolute right-8 top-3 flex items-end gap-[2px] h-4 opacity-50">
-                      <div class="bar h-2 w-1 bg-neon-blue rounded-t-sm"></div>
-                      <div class="bar h-3 w-1 bg-neon-blue rounded-t-sm"></div>
-                      <div class="bar h-1 w-1 bg-neon-blue rounded-t-sm"></div>
-                 </div>
-
-                 <div class="text-[9px] font-mono uppercase text-neon-blue tracking-wider mb-1 group-hover/info:underline" id="widget-label">OFFLINE</div>
-                 
-                 <!-- Laufschrift -->
-                 <div class="relative overflow-hidden h-5 mb-0.5 w-full pr-6">
-                     <div class="text-xs font-bold text-white whitespace-nowrap animate-marquee" id="widget-track">Lade Daten...</div>
-                 </div>
-                 
-                 <div class="text-[10px] text-slate-400 truncate" id="widget-artist">Bitte warten</div>
-                 <div class="text-[9px] text-slate-500 truncate italic mt-0.5 flex gap-1">
+            <div class="widget__info" onclick="openYtMusic()">
+                <div class="widget__visualizer">
+                    <div class="widget__bar" style="height:0.5rem;width:0.25rem"></div>
+                    <div class="widget__bar" style="height:0.75rem;width:0.25rem"></div>
+                    <div class="widget__bar" style="height:0.25rem;width:0.25rem"></div>
+                </div>
+                <div class="widget__label" id="widget-label">OFFLINE</div>
+                <div class="widget__track-container">
+                    <div class="widget__track animate-marquee" id="widget-track">Lade Daten...</div>
+                </div>
+                <div class="widget__artist" id="widget-artist">Bitte warten</div>
+                <div class="widget__album-info">
                     <span id="widget-album"></span>
-                    <span id="widget-year" class="text-slate-600"></span>
-                 </div>
+                    <span id="widget-year" style="color:var(--text-faint)"></span>
+                </div>
             </div>
         </div>
-
-        <!-- HISTORY LIST (Hidden by default) -->
-        <div id="widget-history" class="px-3 pb-3 pt-1 space-y-2 overflow-y-auto max-h-0 transition-all duration-500 opacity-0 border-t border-zinc-800/50">
-            <!-- Items werden per JS eingefügt -->
-        </div>
+        <div id="widget-history" class="widget__history"></div>
     </div>
 
-    <!-- 
-    =======================================================================
-    📝 MODALS (Popups)
-    Diese Fenster sind standardmäßig unsichtbar (class="hidden") und werden
-    per JavaScript eingeblendet.
-    =======================================================================
-    -->
+    <!-- ═══════════ MODALS ═══════════ -->
 
     <!-- IMPRESSUM -->
-    <div id="modal-impressum" class="fixed inset-0 z-[100] hidden bg-black/90 backdrop-blur flex items-center justify-center p-4">
-        <div class="glass-panel border-zinc-700 rounded-xl p-8 max-w-lg w-full relative shadow-2xl">
-            <button onclick="toggleModal('impressum')" class="absolute top-4 right-4 text-slate-500 hover:text-white"><i class="fa-solid fa-xmark fa-xl"></i></button>
-            <h3 class="text-xl font-display text-white mb-4">Impressum</h3>
-            <div class="prose prose-sm prose-invert text-slate-400 font-mono">
+    <div id="modal-impressum" class="modal" role="dialog" aria-label="Impressum">
+        <div class="modal__overlay" onclick="toggleModal('impressum')"></div>
+        <div class="glass-panel modal__content" style="padding:2rem;max-width:32rem;width:100%;border-color:var(--border-subtle)">
+            <button onclick="toggleModal('impressum')" class="modal__close"><i class="fa-solid fa-xmark fa-xl"></i></button>
+            <h3 style="font-family:var(--font-display);color:#fff;margin:0 0 1rem;font-size:1.25rem">Impressum</h3>
+            <div style="color:var(--text-secondary);font-family:var(--font-mono);font-size:0.875rem;line-height:1.8">
                 <p>Angaben gemäß § 5 TMG</p>
                 <p>
                     <strong>Tobias Boyke</strong><br>
@@ -782,7 +483,7 @@
                     E-Mail: Tobias.Boyke+admin@gmail.com<br>
                     Tel: +49 (0) 1573 833 92 63
                 </p>
-                <p class="text-xs text-slate-600 mt-4">
+                <p style="font-size:0.75rem;color:var(--text-faint);margin-top:1rem">
                     Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV:<br>
                     Tobias Boyke (Anschrift wie oben)
                 </p>
@@ -791,26 +492,26 @@
     </div>
 
     <!-- DATENSCHUTZ -->
-    <div id="modal-privacy" class="fixed inset-0 z-[100] hidden bg-black/90 backdrop-blur flex items-center justify-center p-4">
-         <div class="glass-panel border-zinc-700 rounded-xl p-8 max-w-2xl w-full relative shadow-2xl max-h-[90vh] overflow-y-auto">
-            <button onclick="toggleModal('privacy')" class="absolute top-4 right-4 text-slate-500 hover:text-white"><i class="fa-solid fa-xmark fa-xl"></i></button>
-             <h3 class="text-xl font-display text-white mb-4">Datenschutz & Disclaimer</h3>
-             <div class="prose prose-sm prose-invert text-slate-400 font-mono space-y-4 text-xs">
+    <div id="modal-privacy" class="modal" role="dialog" aria-label="Datenschutz">
+        <div class="modal__overlay" onclick="toggleModal('privacy')"></div>
+        <div class="glass-panel modal__content" style="padding:2rem;max-width:42rem;width:100%;max-height:90vh;overflow-y:auto;border-color:var(--border-subtle)">
+            <button onclick="toggleModal('privacy')" class="modal__close"><i class="fa-solid fa-xmark fa-xl"></i></button>
+            <h3 style="font-family:var(--font-display);color:#fff;margin:0 0 1rem;font-size:1.25rem">Datenschutz & Disclaimer</h3>
+            <div style="color:var(--text-secondary);font-family:var(--font-mono);font-size:0.75rem;line-height:1.8;display:flex;flex-direction:column;gap:1rem">
                 <p><strong>1. Datenschutz auf einen Blick (Status 2026)</strong><br>
                 Ihre Privatsphäre ist mir heilig. Diese Website ist so konzipiert, dass sie so wenige Daten wie möglich sammelt. Es gibt keine Werbe-Tracker, kein Google Analytics und keine Social-Media-Pixel.</p>
-                
+
                 <p><strong>2. Hosting & Log-Files</strong><br>
                 Diese Seite wird über GitHub Pages / Netlify gehostet. Der Provider erhebt technisch notwendige Daten (IP-Adresse, Browser, Zeitpunkt), um den sicheren Betrieb zu gewährleisten (Art. 6 Abs. 1 lit. f DSGVO). Diese Daten werden nach kurzer Zeit gelöscht.</p>
 
                 <p><strong>3. Externe Dienste (CDNs & APIs)</strong><br>
-                Damit die Seite so aussieht und funktioniert, wie sie es tut, laden wir Ressourcen von Dritten. Dabei wird Ihre IP an diese Server übermittelt:
-                <ul class="list-disc pl-4">
+                Damit die Seite so aussieht und funktioniert, wie sie es tut, laden wir Ressourcen von Dritten. Dabei wird Ihre IP an diese Server übermittelt:</p>
+                <ul style="list-style:disc;padding-left:1rem">
                     <li><strong>FontAwesome / Google Fonts:</strong> Für Icons und Schriftarten (Optimiertes Caching).</li>
                     <li><strong>Steam CDN:</strong> Für die Spiele-Cover.</li>
                     <li><strong>Last.fm API:</strong> Wenn Sie das Musik-Widget nutzen, wird der aktuelle Titel live abgerufen.</li>
                 </ul>
-                </p>
-                
+
                 <p><strong>4. LocalStorage ("Cookies light")</strong><br>
                 Wir nutzen keine klassischen Cookies! Wir speichern lediglich Ihre <strong>Präferenzen</strong> (Dark/Light Mode) lokal auf Ihrem Gerät (LocalStorage). Diese Daten verlassen nie Ihren Browser.</p>
 
@@ -820,954 +521,161 @@
         </div>
     </div>
 
-    <!-- PERSONNEL DOSSIER (Die Akte) -->
-    <div id="modal-dossier" class="fixed inset-0 z-[100] hidden bg-black/95 backdrop-blur-xl flex items-center justify-center p-4">
-        <div class="glass-panel border-zinc-700/80 rounded-sm p-0 max-w-4xl w-full relative shadow-[0_0_50px_rgba(0,0,0,0.8)] max-h-[90vh] overflow-hidden flex flex-col">
-            <!-- Header (Akte) -->
-            <div class="bg-zinc-900 border-b border-zinc-700 p-4 flex justify-between items-center shrink-0">
-                <div class="flex items-center gap-4">
-                    <div class="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
-                    <h3 class="font-mono text-neon-blue tracking-widest uppercase text-lg">restricted_access // dossier_view</h3>
+    <!-- PERSONNEL DOSSIER -->
+    <div id="modal-dossier" class="modal" role="dialog" aria-label="Personnel Dossier">
+        <div class="modal__overlay" onclick="toggleModal('dossier')" style="background:rgba(0,0,0,0.95);backdrop-filter:blur(20px)"></div>
+        <div class="glass-panel glass-panel--sharp modal__content" style="padding:0;max-width:56rem;width:100%;max-height:90vh;overflow:hidden;display:flex;flex-direction:column;border-color:rgba(63,63,70,0.8);box-shadow:0 0 50px rgba(0,0,0,0.8)">
+            <!-- Header -->
+            <div style="background:rgba(24,24,27,1);border-bottom:1px solid var(--border-subtle);padding:1rem;display:flex;justify-content:space-between;align-items:center;flex-shrink:0">
+                <div style="display:flex;align-items:center;gap:1rem">
+                    <div style="width:0.75rem;height:0.75rem;background:#ef4444;border-radius:9999px;animation:pulse-glow 2s infinite"></div>
+                    <h3 style="font-family:var(--font-mono);color:var(--color-neon-blue);letter-spacing:0.1em;text-transform:uppercase;font-size:1.125rem;margin:0">restricted_access // dossier_view</h3>
                 </div>
-                <button onclick="toggleModal('dossier')" class="text-slate-500 hover:text-red-500 transition-colors">
-                    <i class="fa-solid fa-xmark text-2xl"></i>
+                <button onclick="toggleModal('dossier')" class="modal__close" style="position:static">
+                    <i class="fa-solid fa-xmark" style="font-size:1.5rem"></i>
                 </button>
             </div>
 
-            <!-- Content (Scrollbar) -->
-            <div class="p-8 overflow-y-auto space-y-12 font-mono text-sm text-slate-300 bg-black/40">
-                
-                <!-- 1. SERVICE RECORD (Militär & EVE) -->
-                <div class="grid md:grid-cols-2 gap-12">
-                    <div class="space-y-4">
-                        <h4 class="text-white border-b border-zinc-700 pb-2 uppercase tracking-widest flex items-center gap-2">
-                            <i class="fa-solid fa-shield-halved text-neon-blue"></i> Service Record
-                        </h4>
-                        <ul class="space-y-3">
-                            <li class="flex justify-between">
-                                <span class="text-slate-500">Rank:</span>
-                                <span class="text-white">Fallschirmjäger Offizier</span>
-                            </li>
-                            <li class="flex justify-between">
-                                <span class="text-slate-500">Service Time:</span>
-                                <span class="text-white">21 Years (Active)</span>
-                            </li>
-                             <li class="flex justify-between">
-                                <span class="text-slate-500">Specialization:</span>
-                                <span class="text-white">Leadership & Strategy</span>
-                            </li>
+            <!-- Content -->
+            <div style="padding:2rem;overflow-y:auto;font-family:var(--font-mono);font-size:0.875rem;color:var(--text-secondary);background:var(--bg-card);display:flex;flex-direction:column;gap:3rem">
+
+                <!-- 1. SERVICE RECORD -->
+                <div class="dossier-grid">
+                    <div class="dossier-section">
+                        <h4><i class="fa-solid fa-shield-halved" style="color:var(--color-neon-blue)"></i> Service Record</h4>
+                        <ul class="dossier-list">
+                            <li><span class="dossier-label">Rank:</span><span class="dossier-value">Fallschirmjäger Offizier</span></li>
+                            <li><span class="dossier-label">Service Time:</span><span class="dossier-value">21 Years (Active)</span></li>
+                            <li><span class="dossier-label">Specialization:</span><span class="dossier-value">Leadership & Strategy</span></li>
                         </ul>
-                         <div class="mt-4 pt-4 border-t border-zinc-800">
-                             <h5 class="text-xs text-slate-500 uppercase tracking-wider mb-2">Psychometrics</h5>
-                             <div class="flex justify-between text-xs mb-1">
-                                <span class="text-slate-400">Voice Pattern:</span>
-                                <span class="text-neon-blue">Deep / Resonant (Command)</span>
-                             </div>
-                              <div class="flex justify-between text-xs">
-                                <span class="text-slate-400">Social Trait:</span>
-                                <span class="text-white">Intimidating appearance, helpful core.</span>
-                             </div>
-                         </div>
+                        <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border-default)">
+                            <h5 style="font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.1em;margin:0 0 0.5rem">Psychometrics</h5>
+                            <div style="display:flex;justify-content:space-between;font-size:0.75rem;margin-bottom:0.25rem">
+                                <span style="color:var(--text-secondary)">Voice Pattern:</span>
+                                <span style="color:var(--color-neon-blue)">Deep / Resonant (Command)</span>
+                            </div>
+                            <div style="display:flex;justify-content:space-between;font-size:0.75rem">
+                                <span style="color:var(--text-secondary)">Social Trait:</span>
+                                <span style="color:#fff">Intimidating appearance, helpful core.</span>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="space-y-4">
-                        <h4 class="text-white border-b border-zinc-700 pb-2 uppercase tracking-widest flex items-center gap-2">
-                            <i class="fa-solid fa-rocket text-neon-purple"></i> Digital Service (EVE)
-                        </h4>
-                        <ul class="space-y-3">
-                            <li class="flex justify-between">
-                                <span class="text-slate-500">Playtime:</span>
-                                <span class="text-neon-purple">21,000+ Hours</span>
-                            </li>
-                             <li class="flex justify-between">
-                                <span class="text-slate-500">Skillpoints:</span>
-                                <span class="text-white">400,000,000+</span>
-                            </li>
-                            <li class="flex justify-between">
-                                <span class="text-slate-500">Role:</span>
-                                <span class="text-white">Supercapital Logistics</span>
-                            </li>
+                    <div class="dossier-section">
+                        <h4><i class="fa-solid fa-rocket" style="color:var(--color-neon-purple)"></i> Digital Service (EVE)</h4>
+                        <ul class="dossier-list">
+                            <li><span class="dossier-label">Playtime:</span><span class="dossier-value dossier-value--neon">21,000+ Hours</span></li>
+                            <li><span class="dossier-label">Skillpoints:</span><span class="dossier-value">400,000,000+</span></li>
+                            <li><span class="dossier-label">Role:</span><span class="dossier-value">Supercapital Logistics</span></li>
                         </ul>
                     </div>
                 </div>
 
                 <!-- 2. TECH STACK -->
-                <div class="space-y-4">
-                     <h4 class="text-white border-b border-zinc-700 pb-2 uppercase tracking-widest flex items-center gap-2">
-                        <i class="fa-solid fa-code text-green-500"></i> Technical Competence
-                    </h4>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
-                        <div class="bg-zinc-900/50 p-2 border border-zinc-800 rounded">
-                            <div class="text-slate-500 mb-1">Core</div>
-                            <div class="text-white font-bold">C# / .NET 9</div>
+                <div class="dossier-section">
+                    <h4><i class="fa-solid fa-code" style="color:#22c55e"></i> Technical Competence</h4>
+                    <div class="grid-2-4" style="font-size:0.75rem">
+                        <div style="background:rgba(24,24,27,0.5);padding:0.5rem;border:1px solid var(--border-default);border-radius:var(--radius-md)">
+                            <div style="color:var(--text-muted);margin-bottom:0.25rem">Core</div>
+                            <div style="color:#fff;font-weight:700">C# / .NET 9</div>
                         </div>
-                        <div class="bg-zinc-900/50 p-2 border border-zinc-800 rounded">
-                            <div class="text-slate-500 mb-1">Frontend</div>
-                            <div class="text-white font-bold">Angular 21</div>
+                        <div style="background:rgba(24,24,27,0.5);padding:0.5rem;border:1px solid var(--border-default);border-radius:var(--radius-md)">
+                            <div style="color:var(--text-muted);margin-bottom:0.25rem">Frontend</div>
+                            <div style="color:#fff;font-weight:700">Angular 21</div>
                         </div>
-                         <div class="bg-zinc-900/50 p-2 border border-zinc-800 rounded">
-                            <div class="text-slate-500 mb-1">Styling</div>
-                            <div class="text-white font-bold">Tailwind v4</div>
+                        <div style="background:rgba(24,24,27,0.5);padding:0.5rem;border:1px solid var(--border-default);border-radius:var(--radius-md)">
+                            <div style="color:var(--text-muted);margin-bottom:0.25rem">Styling</div>
+                            <div style="color:#fff;font-weight:700">Tailwind v4</div>
                         </div>
-                         <div class="bg-zinc-900/50 p-2 border border-zinc-800 rounded">
-                            <div class="text-slate-500 mb-1">Cloud</div>
-                            <div class="text-white font-bold">Azure / GCP</div>
+                        <div style="background:rgba(24,24,27,0.5);padding:0.5rem;border:1px solid var(--border-default);border-radius:var(--radius-md)">
+                            <div style="color:var(--text-muted);margin-bottom:0.25rem">Cloud</div>
+                            <div style="color:#fff;font-weight:700">Azure / GCP</div>
                         </div>
-                         <div class="bg-zinc-900/50 p-2 border border-zinc-800 rounded">
-                            <div class="text-slate-500 mb-1">OS (Daily)</div>
-                            <div class="text-white font-bold">Windows 11</div>
+                        <div style="background:rgba(24,24,27,0.5);padding:0.5rem;border:1px solid var(--border-default);border-radius:var(--radius-md)">
+                            <div style="color:var(--text-muted);margin-bottom:0.25rem">OS (Daily)</div>
+                            <div style="color:#fff;font-weight:700">Windows 11</div>
                         </div>
-                         <div class="bg-zinc-900/50 p-2 border border-zinc-800 rounded">
-                            <div class="text-slate-500 mb-1">OS (Root)</div>
-                            <div class="text-white font-bold">Arch Linux</div>
+                        <div style="background:rgba(24,24,27,0.5);padding:0.5rem;border:1px solid var(--border-default);border-radius:var(--radius-md)">
+                            <div style="color:var(--text-muted);margin-bottom:0.25rem">OS (Root)</div>
+                            <div style="color:#fff;font-weight:700">Arch Linux</div>
                         </div>
-                         <div class="bg-zinc-900/50 p-2 border border-zinc-800 rounded">
-                            <div class="text-slate-500 mb-1">Legacy / Alt</div>
-                            <div class="text-white font-bold">Delphi / Java 21</div>
+                        <div style="background:rgba(24,24,27,0.5);padding:0.5rem;border:1px solid var(--border-default);border-radius:var(--radius-md)">
+                            <div style="color:var(--text-muted);margin-bottom:0.25rem">Legacy / Alt</div>
+                            <div style="color:#fff;font-weight:700">Delphi / Java 21</div>
                         </div>
-                         <div class="bg-zinc-900/50 p-2 border border-zinc-800 rounded">
-                            <div class="text-slate-500 mb-1">Databases</div>
-                            <div class="text-white font-bold">MariaDB / MS SQL</div>
+                        <div style="background:rgba(24,24,27,0.5);padding:0.5rem;border:1px solid var(--border-default);border-radius:var(--radius-md)">
+                            <div style="color:var(--text-muted);margin-bottom:0.25rem">Databases</div>
+                            <div style="color:#fff;font-weight:700">MariaDB / MS SQL</div>
                         </div>
                     </div>
                 </div>
 
                 <!-- 3. CULTURAL DATABASE -->
-                <div class="space-y-4">
-                     <h4 class="text-white border-b border-zinc-700 pb-2 uppercase tracking-widest flex items-center gap-2">
-                        <i class="fa-solid fa-compact-disc text-yellow-500"></i> Cultural Database (10/10)
-                    </h4>
-                    <div class="grid md:grid-cols-3 gap-8 text-xs">
+                <div class="dossier-section">
+                    <h4><i class="fa-solid fa-compact-disc" style="color:#eab308"></i> Cultural Database (10/10)</h4>
+                    <div class="dossier-grid" style="grid-template-columns:repeat(3,1fr)">
                         <div>
-                            <strong class="text-neon-blue block mb-2">>> VISUAL_MEDIA</strong>
-                            <ul class="space-y-1 text-slate-400">
-                                <li>The Expanse <span class="text-zinc-600">// Sci-Fi Masterpiece</span></li>
-                                <li>Mr. Robot <span class="text-zinc-600">// Dev Bible</span></li>
-                                <li>Blade Runner <span class="text-zinc-600">// Aesthetic Origin</span></li>
-                                <li>Dune <span class="text-zinc-600">// Scale & Sound</span></li>
+                            <strong style="color:var(--color-neon-blue);display:block;margin-bottom:0.5rem;font-size:0.75rem">&gt;&gt; VISUAL_MEDIA</strong>
+                            <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:0.25rem;color:var(--text-secondary);font-size:0.75rem">
+                                <li>The Expanse <span style="color:var(--text-faint)">// Sci-Fi Masterpiece</span></li>
+                                <li>Mr. Robot <span style="color:var(--text-faint)">// Dev Bible</span></li>
+                                <li>Blade Runner <span style="color:var(--text-faint)">// Aesthetic Origin</span></li>
+                                <li>Dune <span style="color:var(--text-faint)">// Scale & Sound</span></li>
                             </ul>
                         </div>
                         <div>
-                            <strong class="text-neon-purple block mb-2">>> AUDIO_LOGS</strong>
-                            <ul class="space-y-1 text-slate-400">
-                                <li>Trentemøller <span class="text-zinc-600">// The Last Resort</span></li>
-                                <li>Frank Sinatra <span class="text-zinc-600">// The Voice</span></li>
-                                <li>Paul Kalkbrenner <span class="text-zinc-600">// Berlin Calling</span></li>
-                                <li>Hans Zimmer <span class="text-zinc-600">// Epic Score</span></li>
+                            <strong style="color:var(--color-neon-purple);display:block;margin-bottom:0.5rem;font-size:0.75rem">&gt;&gt; AUDIO_LOGS</strong>
+                            <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:0.25rem;color:var(--text-secondary);font-size:0.75rem">
+                                <li>Trentemøller <span style="color:var(--text-faint)">// The Last Resort</span></li>
+                                <li>Frank Sinatra <span style="color:var(--text-faint)">// The Voice</span></li>
+                                <li>Paul Kalkbrenner <span style="color:var(--text-faint)">// Berlin Calling</span></li>
+                                <li>Hans Zimmer <span style="color:var(--text-faint)">// Epic Score</span></li>
                             </ul>
                         </div>
-                         <div>
-                            <strong class="text-green-500 block mb-2">>> INTERACTIVE</strong>
-                            <ul class="space-y-1 text-slate-400">
-                                <li>EVE Online <span class="text-zinc-600">// The Second Job</span></li>
-                                <li>Factorio <span class="text-zinc-600">// The Addiction</span></li>
-                                <li>Helldivers II <span class="text-zinc-600">// The Duty</span></li>
+                        <div>
+                            <strong style="color:#22c55e;display:block;margin-bottom:0.5rem;font-size:0.75rem">&gt;&gt; INTERACTIVE</strong>
+                            <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:0.25rem;color:var(--text-secondary);font-size:0.75rem">
+                                <li>EVE Online <span style="color:var(--text-faint)">// The Second Job</span></li>
+                                <li>Factorio <span style="color:var(--text-faint)">// The Addiction</span></li>
+                                <li>Helldivers II <span style="color:var(--text-faint)">// The Duty</span></li>
                             </ul>
                         </div>
                     </div>
                 </div>
 
-                 <!-- Footer Stamp -->
-                 <div class="pt-8 border-t border-zinc-800 text-center text-xs text-zinc-600 uppercase tracking-[0.2em]">
+                <!-- Footer Stamp -->
+                <div style="padding-top:2rem;border-top:1px solid var(--border-default);text-align:center;font-size:0.75rem;color:var(--text-faint);text-transform:uppercase;letter-spacing:0.2em">
                     End of Record // Classification: Top Secret
-                 </div>
-
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- COOKIE MODAL (CYBERPUNK STYLE) -->
-    <div id="cookie-banner" class="fixed bottom-0 inset-x-0 z-[200] p-4 flex justify-center translate-y-full transition-transform duration-500 ease-out">
-        <div class="glass-panel border-neon-blue/50 rounded-xl p-6 max-w-2xl w-full shadow-[0_0_50px_rgba(0,255,255,0.2)] flex flex-col md:flex-row items-center gap-6 bg-black/95">
-            <div class="text-4xl">🍪</div>
-            <div class="flex-1 space-y-2 text-center md:text-left">
-                <h4 class="text-white font-bold font-header text-lg">PROTOCOL_COOKIE_INIT</h4>
-                <p class="text-sm text-slate-400 font-mono">
-                    Wir nutzen <span class="text-neon-blue">keine Tracker</span>. Lediglich lokale Speicherstände für deine Theme-Einstellungen (Dark/Light Mode). 
+    <!-- COOKIE BANNER -->
+    <div id="cookie-banner" class="cookie-banner">
+        <div class="cookie-banner__content">
+            <div style="font-size:2.5rem">🍪</div>
+            <div style="flex:1;display:flex;flex-direction:column;gap:0.5rem;text-align:center">
+                <h4 style="color:#fff;font-weight:700;font-size:1.125rem;margin:0">PROTOCOL_COOKIE_INIT</h4>
+                <p style="font-size:0.875rem;color:var(--text-secondary);font-family:var(--font-mono);margin:0">
+                    Wir nutzen <span style="color:var(--color-neon-blue)">keine Tracker</span>. Lediglich lokale Speicherstände für deine Theme-Einstellungen (Dark/Light Mode).
                     Das ist technisch notwendig, damit deine Augen nicht bluten. Deal?
                 </p>
             </div>
-            <div class="flex gap-4 shrink-0">
-                <button onclick="acceptCookies()" class="px-6 py-2 bg-neon-blue text-black font-bold font-mono rounded hover:bg-white transition hover:shadow-[0_0_15px_rgba(0,255,255,0.8)]">
-                    [ ACCEPT ]
-                </button>
-                 <button onclick="acceptCookies()" class="px-6 py-2 border border-zinc-700 text-slate-400 font-mono rounded hover:text-white hover:border-white transition">
-                    [ WHATEVER ]
-                </button>
+            <div style="display:flex;gap:1rem;flex-shrink:0">
+                <button onclick="acceptCookies()" class="btn btn--primary">[ ACCEPT ]</button>
+                <button onclick="acceptCookies()" class="btn btn--ghost">[ WHATEVER ]</button>
             </div>
         </div>
     </div>
 
-    <!-- 
-    =======================================================================
-    🧠 DAS GEHIRN (JAVASCRIPT)
-    Hier passiert die Magie (Interaktion, Animationen, Daten).
-    =======================================================================
-    -->
-    <script>
-        /** 
-         * 🎮 SPIELE-DATENBANK
-         * =========================================
-         * ZUKUNFTS-NOTE #3: Liste der Spiele
-         * Willst du ein neues Spiel hinzufügen?
-         * 1. Kopiere eine Zeile (z.B. { id: ..., name: ... }).
-         * 2. Suche die STEAM-ID: Gehe auf die Shop-Seite des Spiels. Die ID ist in der URL.
-         *    Bsp: store.steampowered.com/app/12345/Spielname -> ID ist 12345.
-         * 3. Füge es hier ein. Das Bild holt sich das Skript automatisch von den Steam-Servern.
-         */
-        const games = [
-            { id: 244850, name: "Space Engineers" },
-            { id: 553850, name: "Helldivers II" },
-            { id: 431240, name: "Golf With Your Friends" },
-            { id: 559650, name: "Witch It!" },
-            { id: 1484210, name: "Lockdown Protocol" },
-            { id: 427520, name: "Factorio" }, 
-            { id: 9350,   name: "Supreme Commander" },
-            { id: 264710, name: "Subnautica" },
-            { id: 3241660, name: "R.E.P.O." }, 
-            { id: 361420, name: "Astroneer" },
-            { id: 1568590, name: "Goose Goose Duck" },
-            { id: 281990, name: "Stellaris" }
-        ];
-
-        const gamesGrid = document.getElementById('games-grid');
-
-        // ZUKUNFTS-NOTE #4: Render-Loop
-        // Dieser Code baut für jedes Spiel in der Liste (oben) eine HTML-Kachel.
-        // Das ist besser als 20x denselben HTML-Code zu kopieren (DRY Prinzip: Don't Repeat Yourself).
-        games.forEach(game => {
-            // Wir machen die ganze Karte zum Link (<a> Tag)
-            const card = document.createElement('a');
-            card.href = `https://store.steampowered.com/app/${game.id}`;
-            card.target = "_blank"; // Öffnet in neuem Tab
-            
-            // Basis-Klassen: 'tilt-card' aktiviert unsere 3D-Kipp-Logik (siehe unten)
-            card.className = "tilt-card relative h-48 rounded-xl cursor-pointer group block"; // 'block' ist wichtig für <a>
-            
-            // Magic URL: Steam hostet die Bilder für alle Spiele öffentlich.
-            const imgUrl = `https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/${game.id}/header.jpg`;
-            
-            // Der HTML-Inhalt jeder Karte
-            card.innerHTML = `
-                <div class="tilt-inner absolute inset-0 rounded-xl overflow-hidden shadow-lg border border-zinc-800 bg-zinc-900">
-                    <div class="w-full h-full bg-cover bg-center transition-transform duration-500 group-hover:scale-110" style="background-image: url('${imgUrl}');">
-                        <!-- Ein dunkler Verlauf über dem Bild für bessere Lesbarkeit -->
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
-                    </div>
-                </div>
-                <!-- Der Titel des Spiels (schwebt über dem Bild) -->
-                <div class="absolute bottom-0 left-0 right-0 p-4 transform translate-y-2 opacity-80 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none z-20">
-                    <h4 class="font-display text-[10px] md:text-xs text-white drop-shadow-md tracking-wider">${game.name}</h4>
-                </div>
-                <!-- Kleines Icon für "Externer Link" oben rechts -->
-                <div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-20">
-                    <i class="fa-solid fa-arrow-up-right-from-square text-white/50 text-xs"></i>
-                </div>
-            `;
-            
-            // Event-Listener: Was passiert, wenn die Maus kommt oder geht?
-            card.addEventListener('mousemove', handleTilt); // Maus bewegt sich -> Kippen
-            card.addEventListener('mouseleave', resetTilt); // Maus geht raus -> Zurücksetzen
-            
-            gamesGrid.appendChild(card);
-        });
-
-        // 🏗️ 3D KIPP-EFFEKT LOGIK
-        function handleTilt(e) {
-            const card = e.currentTarget;
-            const rect = card.getBoundingClientRect(); // Wo ist die Karte genau?
-            
-            // Mausposition innerhalb der Karte berechnen
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            
-            const centerX = rect.width / 2;
-            const centerY = rect.height / 2;
-            
-            // Berechnen der Drehung (Je weiter vom Zentrum, desto mehr Drehung)
-            // Die '12' bestimmt die Stärke des Effekts. Kleinerer Wert = Weniger Kippen.
-            const rotateX = ((y - centerY) / centerY) * -12; 
-            const rotateY = ((x - centerX) / centerX) * 12;
-
-            // Wir wenden die Transformation an
-            card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.05, 1.05, 1.05)`;
-        }
-
-        // Karten-Position zurücksetzen
-        function resetTilt(e) {
-             e.currentTarget.style.transform = `perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)`;
-        }
-
-        // 🎵 LIVE MUSIK WIDGET (LAST.FM API)
-        // ====================================================================
-        // ZUKUNFTS-DU: Wenn das nicht geht, ist wahrscheinlich der API Key abgelaufen 
-        // oder Last.fm hat die API geändert. Checke: https://www.last.fm/api
-        // ====================================================================
-        
-        // DEIN API KEY (Hier einfügen!)
-        // Wenn leer, wird der Demo-Modus unten genutzt.
-        const LASTFM_API_KEY = 'cb97d6a128f56296243dc028e47dfb69'; 
-        const LASTFM_USER = 'spezialzt'; // Dein Username auf Last.fm
-
-        const wLabel = document.getElementById('widget-label');
-        const wTrack = document.getElementById('widget-track');
-        const wArtist = document.getElementById('widget-artist');
-        const wAlbum = document.getElementById('widget-album');
-        const wYear = document.getElementById('widget-year');
-        const wArt = document.getElementById('widget-art');
-        const wFallback = document.getElementById('widget-art-fallback');
-        const wHistory = document.getElementById('widget-history');
-        const wWidget = document.getElementById('status-widget');
-        const wToggleIcon = document.getElementById('widget-toggle-icon');
-        const cookieBanner = document.getElementById('cookie-banner');
-        
-        // COOKIE LOGIK
-        setTimeout(() => {
-            if(!localStorage.getItem('cookieConsent')) {
-                // Zeige Banner nach 1 Sekunde, wenn noch nicht akzeptiert
-                cookieBanner.classList.remove('translate-y-full');
-            }
-        }, 1000);
-
-        function acceptCookies() {
-            localStorage.setItem('cookieConsent', 'true');
-            cookieBanner.classList.add('translate-y-full');
-            // Sound-Effekt könnte hier hin ;)
-        }
-
-        let isExpanded = false;
-
-        function toggleWidget() {
-            isExpanded = !isExpanded;
-            if(isExpanded) {
-                // Expandieren
-                wWidget.classList.remove('h-24', 'hover:scale-105'); // Scale Hover stört beim Expandieren
-                wWidget.classList.add('h-auto');
-                wHistory.classList.remove('max-h-0', 'opacity-0');
-                wHistory.classList.add('max-h-64', 'opacity-100'); // Max Height für Scroll
-                wToggleIcon.classList.replace('fa-chevron-up', 'fa-chevron-down');
-            } else {
-                // Kollabieren
-                wHistory.classList.remove('max-h-64', 'opacity-100');
-                wHistory.classList.add('max-h-0', 'opacity-0');
-                // Warten bis Animation fertig (500ms) bevor wir h-24 setzen, aber CSS transition regelt das meist smooth
-                // Hier machen wir es einfach via CSS Klasse
-                wWidget.classList.remove('h-auto');
-                wWidget.classList.add('h-24', 'hover:scale-105');
-                wToggleIcon.classList.replace('fa-chevron-down', 'fa-chevron-up');
-            }
-        }
-
-        // FALLBACK DATEN (Demo-Modus)
-        const demoTracks = [
-            { artist: "Carpenter Brut", track: "Turbo Killer", album: "Trilogy", year: "2015" },
-            { artist: "The Midnight", track: "Los Angeles", album: "Days of Thunder", year: "2014" },
-            { artist: "Gunship", track: "Tech Noir", album: "Gunship", year: "2015" },
-            { artist: "Perturbator", track: "Future Club", album: "Dangerous Days", year: "2014" },
-            { artist: "Kavinsky", track: "Nightcall", album: "OutRun", year: "2013" }
-        ];
-
-        let demoIndex = 0;
-
-        /**
-         * Holt zusätzl. Album-Info (Jahr)
-         */
-        async function fetchAlbumYear(artist, album) {
-            // ... same as before ...
-             if (!artist || !album) return '';
-            try {
-                const url = `https://ws.audioscrobbler.com/2.0/?method=album.getinfo&api_key=${LASTFM_API_KEY}&artist=${encodeURIComponent(artist)}&album=${encodeURIComponent(album)}&format=json`;
-                const res = await fetch(url);
-                const data = await res.json();
-                if (data.album && data.album.wiki && data.album.wiki.published) {
-                    const match = data.album.wiki.published.match(/\d{4}/);
-                    return match ? `(${match[0]})` : '';
-                }
-            } catch (e) { return ''; }
-            return '';
-        }
-
-        /**
-         * Holt den aktuell gespielten Song von Last.fm + History
-         */
-        async function fetchNowPlaying() {
-            if (!LASTFM_API_KEY || LASTFM_API_KEY === 'YOUR_API_KEY_HERE') {
-                startDemoMode();
-                return;
-            }
-
-            try {
-                // limit=6 (1 Aktuell + 5 History)
-                const url = `https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${LASTFM_USER}&api_key=${LASTFM_API_KEY}&format=json&limit=6`;
-                
-                const response = await fetch(url);
-                const data = await response.json();
-
-                if (!data.recenttracks || !data.recenttracks.track) throw new Error("Keine Tracks");
-
-                const tracks = data.recenttracks.track;
-                const currentTrack = tracks[0];
-                
-                // --- UPDATE MAIN ---
-                const isNowPlaying = currentTrack['@attr'] && currentTrack['@attr'].nowplaying === 'true';
-                const image = currentTrack.image.find(img => img.size === 'large') || currentTrack.image[2];
-                
-                let year = '';
-                if(currentTrack.album['#text']) {
-                    year = await fetchAlbumYear(currentTrack.artist['#text'], currentTrack.album['#text']);
-                }
-
-                updateWidgetUI(
-                    isNowPlaying ? 'LISTENING NOW' : 'LAST PLAYED', 
-                    currentTrack.name, 
-                    currentTrack.artist['#text'],
-                    currentTrack.album['#text'],
-                    year,
-                    image ? image['#text'] : ''
-                );
-
-                // --- UPDATE HISTORY ---
-                // Wir nehmen Tracks 1 bis 5 (insgesamt 5 Stück)
-                const historyTracks = tracks.slice(1, 6);
-                updateHistoryUI(historyTracks);
-
-            } catch (error) {
-                if(wTrack.innerText === 'Lade Daten...') startDemoMode();
-            }
-        }
-
-        // ZUKUNFTS-NOTE #6: History Update
-        function updateHistoryUI(tracks) {
-            wHistory.innerHTML = ''; // Clear
-            
-            if(!tracks || tracks.length === 0) {
-                wHistory.innerHTML = '<div class="text-center text-[10px] text-slate-600">Keine Historie verfügbar</div>';
-                return;
-            }
-
-            // Label "Recently Played" nur einmal oben
-            const header = document.createElement('div');
-            header.className = "text-[9px] font-mono text-zinc-500 uppercase tracking-widest px-1 pb-1";
-            header.innerText = "Recently Played";
-            wHistory.appendChild(header);
-
-            tracks.forEach(t => {
-                const div = document.createElement('div');
-                div.className = "flex items-center gap-2 p-1.5 rounded hover:bg-white/5 transition group cursor-pointer";
-                // Klick auf History Item öffnet auch YT Music
-                div.onclick = () => {
-                     const query = encodeURIComponent(`${t.artist['#text']} ${t.name}`);
-                     window.open(`https://music.youtube.com/search?q=${query}`, '_blank');
-                };
-                
-                const imgObj = t.image.find(img => img.size === 'small') || t.image[0];
-                const imgUrl = imgObj ? imgObj['#text'] : '';
-                
-                div.innerHTML = `
-                    <div class="w-8 h-8 rounded bg-zinc-800 shrink-0 overflow-hidden border border-zinc-700">
-                        ${imgUrl ? `<img src="${imgUrl}" class="w-full h-full object-cover">` : '<div class="w-full h-full flex items-center justify-center"><i class="fa-solid fa-music text-xs text-zinc-600"></i></div>'}
-                    </div>
-                    <div class="min-w-0 flex-1">
-                        <div class="text-[10px] font-bold text-slate-300 truncate group-hover:text-neon-blue transition-colors">${t.name}</div>
-                        <div class="text-[9px] text-slate-500 truncate">${t.artist['#text']}</div>
-                    </div>
-                    <div class="text-[8px] font-mono text-zinc-600 whitespace-nowrap">
-                        ${t.date ? new Date(t.date.uts * 1000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '...'}
-                    </div>
-                `;
-                wHistory.appendChild(div);
-            });
-        }
-        
-        /**
-         * Öffnet YouTube Music Suche für den aktuellen Track
-         */
-        function openYtMusic() {
-            const track = wTrack.innerText;
-            const artist = wArtist.innerText;
-            if(track === 'Lade Daten...' || track === 'Keine Tracks gefunden') return;
-            
-            const query = encodeURIComponent(`${artist} ${track}`);
-            window.open(`https://music.youtube.com/search?q=${query}`, '_blank');
-        }
-
-
-        /**
-         * Updated das Widget unten rechts
-         */
-        function updateWidgetUI(label, track, artist, album, year, imgUrl) {
-            // Nur updaten wenn sich Track geändert hat
-            if (wTrack.innerText !== track) {
-                wLabel.innerText = label;
-                wTrack.innerText = track;
-                wArtist.innerText = artist;
-                wAlbum.innerText = album || ''; 
-                wYear.innerText = year || '';
-
-                // Cover Update
-                if (imgUrl) {
-                    wArt.src = imgUrl;
-                    wArt.onload = () => {
-                        wArt.classList.remove('opacity-0'); // Fade In
-                        wFallback.style.display = 'none';
-                    };
-                } else {
-                     wArt.classList.add('opacity-0');
-                     wFallback.style.display = 'flex';
-                }
-                
-                // Animation reset für Marquee (Trick: Entfernen und neu hinzufügen)
-                wTrack.classList.remove('animate-marquee');
-                void wTrack.offsetWidth;
-                wTrack.classList.add('animate-marquee');
-            }
-        }
-
-        /**
-         * Der Demo-Modus (falls API kaputt)
-         */
-        function startDemoMode() {
-             // Intervall starten
-             setInterval(() => {
-                const song = demoTracks[demoIndex];
-                updateWidgetUI("ON ROTATION", song.track, song.artist, song.album, `(${song.year})`, '');
-                demoIndex = (demoIndex + 1) % demoTracks.length;
-             }, 5000);
-        }
-
-        // Init: Einmal sofort laden, dann alle 15 Sekunden aktualisieren
-        fetchNowPlaying();
-        setInterval(fetchNowPlaying, 15000); // 15000ms = 15 Sekunden (API Limit Fairness)
-
-        // 🪟 MODAL LOGIK (Fenster auf/zu machen)
-        window.toggleModal = function(id) {
-            const modal = document.getElementById(`modal-${id}`);
-            if (modal.classList.contains('hidden')) {
-                modal.classList.remove('hidden'); // Anzeigen
-                document.body.style.overflow = 'hidden'; // Hintergrund-Scrollen verbieten
-            } else {
-                modal.classList.add('hidden'); // Verstecken
-                document.body.style.overflow = ''; // Scrollen wieder erlauben
-            }
-        };
-
-        // 🤫 KONAMI CODE (Ein kleines Easter Egg)
-        // Code: Oben, Oben, Unten, Unten, Links, Rechts, Links, Rechts, B, A
-        const konamiCode = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
-        let konamiIndex = 0;
-
-        document.addEventListener('keydown', (e) => {
-            if (e.key === konamiCode[konamiIndex]) {
-                konamiIndex++;
-                if (konamiIndex === konamiCode.length) {
-                    activateKonamiMode();
-                    konamiIndex = 0;
-                }
-            } else {
-                konamiIndex = 0; // Falsche Taste -> Von vorne anfangen
-            }
-        });
-
-        function activateKonamiMode() {
-            // 50 Konfetti-Schnipsel erzeugen
-            for(let i=0; i<50; i++) createConfetti();
-            // Bildschirm kurz aufleuchten lassen
-            document.body.classList.add('animate-pulse');
-            setTimeout(() => document.body.classList.remove('animate-pulse'), 1000);
-        }
-
-        // Erzeugt einen einzelnen Konfetti-Schnipsel
-        function createConfetti() {
-            const confetti = document.createElement('div');
-            confetti.classList.add('confetti');
-            confetti.style.left = Math.random() * 100 + 'vw'; // Zufällige Position
-            confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`; // Zufällige Farbe
-            confetti.style.animationDuration = Math.random() * 3 + 2 + 's'; // Zufällige Fallgeschwindigkeit
-            document.body.appendChild(confetti);
-            setTimeout(() => confetti.remove(), 5000); // Nach 5 Sekunden löschen
-        }
-
-        // 🔦 SPOTLIGHT LOGIK (Taschenlampe)
-        const spotlight = document.getElementById('spotlight');
-        document.addEventListener('mousemove', (e) => {
-            if (spotlight) {
-                // Berechnet die Mausposition in Prozent (0-100%)
-                const x = (e.clientX / window.innerWidth) * 100;
-                const y = (e.clientY / window.innerHeight) * 100;
-                
-                // Setzt die CSS-Variablen für den Farbverlauf
-                spotlight.style.setProperty('--x', `${x}%`);
-                spotlight.style.setProperty('--y', `${y}%`);
-                spotlight.style.opacity = '1'; // Sichtbar machen sobald Maus sich bewegt
-            }
-        });
-
-        // 🌓 THEME LOGIK
-        const htmlRoot = document.documentElement;
-        const themeBtns = document.querySelectorAll('.theme-btn');
-
-        // Funktion zum Setzen des Themes
-        function switchTheme(mode) {
-            // 1. Speichern
-            localStorage.setItem('theme', mode);
-            
-            // 2. Anwenden
-            applyTheme(mode);
-            
-            // 3. UI updaten
-            updateThemeUI(mode);
-        }
-
-        function applyTheme(mode) {
-             // Reset
-             htmlRoot.classList.remove('light-mode');
-             
-             if (mode === 'light') {
-                 htmlRoot.classList.add('light-mode');
-             } else if (mode === 'system') {
-                 // Check System Prefernece
-                 if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
-                     htmlRoot.classList.add('light-mode');
-                 }
-                 // Bei Dark Mode machen wir nichts, da Default = Dark
-             }
-             // Bei 'dark' machen wir nichts, da Default = Dark
-        }
-
-        function updateThemeUI(activeMode) {
-            themeBtns.forEach(btn => {
-                const theme = btn.dataset.theme;
-                if (theme === activeMode) {
-                    btn.classList.add('active');
-                } else {
-                    btn.classList.remove('active');
-                }
-            });
-        }
-
-        // Init beim Laden
-        (function initTheme() {
-            // Gucken was gespeichert ist, sonst System
-            const savedTheme = localStorage.getItem('theme') || 'system';
-            applyTheme(savedTheme);
-            updateThemeUI(savedTheme);
-            
-            // Listener für System-Änderungen (wenn User OS on-the-fly ändert)
-            window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', e => {
-                if (localStorage.getItem('theme') === 'system') {
-                    applyTheme('system');
-                }
-            });
-        })();
-
-        // 🖥️ TERMINAL SYSTEM
-        // ===================================
-        const termOverlay = document.getElementById('terminal-overlay');
-        const termInput = document.getElementById('terminal-input');
-        const termOutput = document.getElementById('terminal-output');
-        let termHistory = [];
-        let termHistoryIndex = -1;
-
-        // Toggle Terminal mit '^' (Zirkumflex), '°', 'Backquote' (Position unter Esc) oder F2
-        document.addEventListener('keydown', (e) => {
-            // Check für verschiedene Tasten-Codes, da '^' oft eine "Dead Key" ist
-            if (e.key === '^' || e.key === '°' || e.code === 'Backquote' || e.key === 'F2') {
-                e.preventDefault();
-                toggleTerminal();
-            }
-            if (e.key === 'Escape' && termOverlay.classList.contains('open')) {
-                toggleTerminal();
-            }
-        });
-
-        function toggleTerminal() {
-            termOverlay.classList.toggle('open');
-            if (termOverlay.classList.contains('open')) {
-                termInput.focus();
-                AudioSys.play('open');
-            } else {
-                termInput.blur();
-                AudioSys.play('click');
-            }
-        }
-
-        // Command Handler
-        termInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                const cmd = termInput.value.trim();
-                if (cmd) {
-                    executeCommand(cmd);
-                    termHistory.push(cmd);
-                    termHistoryIndex = termHistory.length;
-                    termInput.value = '';
-                }
-            } else if (e.key === 'ArrowUp') {
-                 if (termHistoryIndex > 0) {
-                     termHistoryIndex--;
-                     termInput.value = termHistory[termHistoryIndex];
-                 }
-                 e.preventDefault();
-            } else if (e.key === 'ArrowDown') {
-                 if (termHistoryIndex < termHistory.length - 1) {
-                     termHistoryIndex++;
-                     termInput.value = termHistory[termHistoryIndex];
-                 } else {
-                     termHistoryIndex = termHistory.length;
-                     termInput.value = '';
-                 }
-            }
-        });
-
-        function executeCommand(cmdStr) {
-            const args = cmdStr.split(' ');
-            const cmd = args[0].toLowerCase();
-
-            // Echo Command
-            printLine(`<span class="text-neon-pink">visitor@mr-rioes:~$</span> ${cmdStr}`);
-
-            // Logic
-            switch(cmd) {
-                case 'help':
-                    printLine(`Available commands:
-  <span class="text-white">whoami</span>     - Display user bio
-  <span class="text-white">contact</span>    - Show contact details
-  <span class="text-white">games</span>      - List favorite games
-  <span class="text-white">skills</span>     - List technical skills
-  <span class="text-white">clear</span>      - Clear terminal screen
-  <span class="text-white">exit</span>       - Close terminal
-  <span class="text-white">sudo</span>       - Execute as superuser`);
-                    break;
-                case 'whoami':
-                    printLine(`User: Tobias Boyke (Mr. Riös)
-Role: Paratrooper Officer & Fullstack Developer
-Status: <span class="text-green-400">ONLINE</span>
-Quote: "Führen durch Vorbild."`);
-                    break;
-                case 'contact':
-                    printLine(`E-Mail: Tobias.Boyke+admin@gmail.com
-GitHub: github.com/T-Boyke
-Steam: mr-rioes`);
-                    break;
-                case 'games':
-                    printLine(`Favorites:
-- EVE Online (21k hrs)
-- Factorio (The Factory Must Grow)
-- Helldivers 2 (For Democracy!)
-- Space Engineers`);
-                    break;
-                case 'skills':
-                    printLine(`- C# / .NET 8/9
-- Angular 17+
-- Tailwind CSS
-- Leadership (Lvl 100)`);
-                    break;
-                case 'clear':
-                    termOutput.innerHTML = '';
-                    break;
-                case 'exit':
-                    toggleTerminal();
-                    break;
-                case 'sudo':
-                    printLine(`<span class="text-red-500">PERMISSION DENIED. Nice try, script kiddy.</span>`);
-                    AudioSys.play('click'); // Error sound later?
-                    break;
-                case 'matrix':
-                    printLine(`The Matrix has you...`);
-                    // Easter Egg trigger
-                    startMatrix();
-                    toggleTerminal(); // Close terminal to show effect
-                    break;
-                default:
-                    printLine(`<span class="text-red-400">Command not found: ${cmd}</span>`);
-            }
-            AudioSys.play('hover'); // Typing sound feedback
-        }
-
-        function printLine(html) {
-            const div = document.createElement('div');
-            div.innerHTML = html;
-            termOutput.appendChild(div);
-            termOutput.scrollTop = termOutput.scrollHeight;
-        }
-
-        // 🐇 MATRIX EASTER EGG
-        // ==========================
-        const matrixCanvas = document.getElementById('matrix-canvas');
-        const mCtx = matrixCanvas.getContext('2d');
-        let mInterval;
-
-        function startMatrix() {
-            matrixCanvas.classList.remove('hidden');
-            matrixCanvas.width = window.innerWidth;
-            matrixCanvas.height = window.innerHeight;
-
-            const katakana = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッン0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-            const latin = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-            const nums = '0123456789';
-            const alphabet = katakana + latin + nums;
-
-            const fontSize = 16;
-            const columns = matrixCanvas.width/fontSize;
-
-            const drops = [];
-            for(let x = 0; x < columns; x++)
-                drops[x] = 1;
-
-            const draw = () => {
-                mCtx.fillStyle = 'rgba(0, 0, 0, 0.05)';
-                mCtx.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height);
-
-                mCtx.fillStyle = '#0F0'; // Neon Green
-                mCtx.font = fontSize + 'px monospace';
-
-                for(let i = 0; i < drops.length; i++) {
-                    const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
-                    mCtx.fillText(text, i*fontSize, drops[i]*fontSize);
-
-                    if(drops[i]*fontSize > matrixCanvas.height && Math.random() > 0.975)
-                        drops[i] = 0;
-
-                    drops[i]++;
-                }
-            };
-
-            mInterval = setInterval(draw, 30);
-            
-            // Exit Handler
-            const stopMatrix = () => {
-                clearInterval(mInterval);
-                matrixCanvas.classList.add('hidden');
-                matrixCanvas.removeEventListener('click', stopMatrix);
-                document.removeEventListener('keydown', escHandler);
-            };
-            
-            const escHandler = (e) => {
-                if(e.key === 'Escape') stopMatrix();
-            };
-
-            matrixCanvas.addEventListener('click', stopMatrix);
-            document.addEventListener('keydown', escHandler);
-        }
-
-
-        // 🔊 AUDIO SYSTEM (WEB AUDIO API)
-        // ===================================
-        // Erzeugt Sounds dynamisch (Synth) ohne externe Files laden zu müssen.
-        // Cyberpunk/Sci-Fi Style.
-        
-        const AudioSys = {
-            ctx: null,
-            enabled: false,
-            
-            init: function() {
-                // Check Preference
-                const pref = localStorage.getItem('soundEnabled');
-                this.enabled = pref === 'true'; // Default off to be polite, or user intent
-                this.updateUI();
-
-                // Kontext erst bei erster Interaktion erstellen (Browser Policy)
-                document.addEventListener('click', () => {
-                   if(!this.ctx && this.enabled) {
-                       this.ctx = new (window.AudioContext || window.webkitAudioContext)();
-                   }
-                }, {once: true});
-            },
-
-            toggle: function() {
-                this.enabled = !this.enabled;
-                localStorage.setItem('soundEnabled', this.enabled);
-                this.updateUI();
-                
-                // Init Context if needed
-                if(this.enabled && !this.ctx) {
-                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
-                    this.play('click'); // Feedback direkt beim Einschalten
-                }
-            },
-
-            updateUI: function() {
-                const btn = document.getElementById('btn-sound');
-                const icon = btn.querySelector('i');
-                if(this.enabled) {
-                    icon.className = 'fa-solid fa-volume-high text-neon-blue';
-                    btn.classList.add('text-neon-blue');
-                } else {
-                    icon.className = 'fa-solid fa-volume-xmark';
-                    btn.classList.remove('text-neon-blue');
-                }
-            },
-
-            play: function(type) {
-                if(!this.enabled || !this.ctx) return;
-                // Resume falls suspended (Browser Policy)
-                if(this.ctx.state === 'suspended') this.ctx.resume();
-
-                const osc = this.ctx.createOscillator();
-                const gain = this.ctx.createGain();
-                
-                osc.connect(gain);
-                gain.connect(this.ctx.destination);
-
-                const now = this.ctx.currentTime;
-
-                if (type === 'hover') {
-                    // Kurzes, hohes "Tick"
-                    osc.type = 'sine';
-                    osc.frequency.setValueAtTime(800, now);
-                    osc.frequency.exponentialRampToValueAtTime(300, now + 0.05);
-                    gain.gain.setValueAtTime(0.05, now); // Sehr leise
-                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
-                    osc.start(now);
-                    osc.stop(now + 0.05);
-
-                } else if (type === 'click') {
-                    // Bestätigungs "Bloop"
-                    osc.type = 'triangle';
-                    osc.frequency.setValueAtTime(400, now);
-                    osc.frequency.exponentialRampToValueAtTime(100, now + 0.1);
-                    gain.gain.setValueAtTime(0.1, now);
-                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
-                    osc.start(now);
-                    osc.stop(now + 0.1);
-
-                } else if (type === 'open') {
-                    // High-Tech Swell
-                    osc.type = 'sine';
-                    osc.frequency.setValueAtTime(200, now);
-                    osc.frequency.linearRampToValueAtTime(600, now + 0.2);
-                    gain.gain.setValueAtTime(0.05, now);
-                    gain.gain.linearRampToValueAtTime(0, now + 0.3);
-                    osc.start(now);
-                    osc.stop(now + 0.3);
-                }
-            }
-        };
-
-        // UI Binding Function
-        function toggleSound() {
-            AudioSys.toggle();
-        }
-
-        AudioSys.init();
-
-        // Global Event Listeners für Sound
-        // HOVER
-        document.querySelectorAll('a, button, .tilt-card').forEach(el => {
-            el.addEventListener('mouseenter', () => AudioSys.play('hover'));
-            el.addEventListener('click', () => AudioSys.play('click'));
-        });
-
-        // Speziell für Modal-Funktionen
-        const originalToggleModal = window.toggleModal;
-        window.toggleModal = function(id) {
-            originalToggleModal(id);
-            const modal = document.getElementById(`modal-${id}`);
-            if (!modal.classList.contains('hidden')) {
-                AudioSys.play('open');
-            } else {
-                AudioSys.play('click');
-            }
-        };
-    </script>
+    <!-- ⚡ JAVASCRIPT (Modulare Architektur, geladen mit defer) -->
+    <script src="js/theme.js" defer></script>
+    <script src="js/audio.js" defer></script>
+    <script src="js/widget.js" defer></script>
+    <script src="js/terminal.js" defer></script>
+    <script src="js/games.js" defer></script>
+    <script src="js/effects.js" defer></script>
+    <script src="js/app.js" defer></script>
 </body>
 </html>

@@ -1,0 +1,231 @@
+/* =======================================================================
+ * 🔧 UTILITIES — Helferlein-Klassen und Hintergrund-Effekte
+ * =======================================================================
+ * Marken-Farben, Retro-Grid, Scanlines, Spotlight.
+ * ======================================================================= */
+
+/* -----------------------------------------------------------------------
+ * 🎨 BRAND COLORS — Social Media Markenfarben
+ * ----------------------------------------------------------------------- */
+.bg-twitch   { background-color: #9146FF; color: white; }
+.bg-steam    { background-color: #1b2838; color: white; }
+.bg-lastfm   { background-color: #ba0000; color: white; }
+.bg-trakt    { background-color: #ED1C24; color: white; }
+.bg-youtube  { background-color: #FF0000; color: white; }
+.bg-discord  { background-color: #5865F2; color: white; }
+
+/* Hover-Glow für Social Icons */
+.social-icon--twitch:hover  { box-shadow: 0 0 25px rgba(145, 70, 255, 0.8); }
+.social-icon--steam:hover   { box-shadow: 0 0 25px rgba(102, 192, 244, 0.8); }
+.social-icon--lastfm:hover  { box-shadow: 0 0 25px rgba(186, 0, 0, 0.8); }
+.social-icon--trakt:hover   { box-shadow: 0 0 25px rgba(237, 28, 36, 0.8); }
+.social-icon--youtube:hover { box-shadow: 0 0 25px rgba(255, 0, 0, 0.8); }
+.social-icon--discord:hover { box-shadow: 0 0 25px rgba(88, 101, 242, 0.8); }
+
+/* -----------------------------------------------------------------------
+ * 🌐 RETRO GRID — 80er Jahre Perspektiv-Gitter
+ * ----------------------------------------------------------------------- */
+.retro-grid {
+    background-image:
+        linear-gradient(rgba(0, 255, 255, 0.25) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 255, 255, 0.25) 1px, transparent 1px);
+    background-size: 40px 40px;
+    perspective: 500px;
+    transform-style: preserve-3d;
+    animation: grid-move 2s linear infinite;
+}
+
+/* Light Mode Variante */
+:root.light-mode .retro-grid {
+    background-image:
+        linear-gradient(rgba(0, 119, 255, 0.15) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 119, 255, 0.15) 1px, transparent 1px);
+}
+
+/* -----------------------------------------------------------------------
+ * 📺 SCANLINES — CRT-Monitor Effekt
+ * ----------------------------------------------------------------------- */
+.scanlines {
+    background:
+        linear-gradient(rgba(18,16,16,0) 50%, rgba(0,0,0,0.25) 50%),
+        linear-gradient(90deg, rgba(255,0,0,0.06), rgba(0,255,0,0.02), rgba(0,0,255,0.06));
+    background-size: 100% 4px, 3px 100%;
+    opacity: 0.2;
+}
+
+/* -----------------------------------------------------------------------
+ * 💡 SPOTLIGHT — Cursor-Taschenlampe
+ * ----------------------------------------------------------------------- */
+.spotlight {
+    background: radial-gradient(
+        circle at var(--x, 50%) var(--y, 50%),
+        rgba(0, 255, 255, 0.15) 0%,
+        transparent 50%
+    );
+    opacity: 0;
+    transition: opacity var(--transition-slow);
+}
+
+.spotlight.is-active {
+    opacity: 1;
+}
+
+/* -----------------------------------------------------------------------
+ * 🎨 BACKGROUND LAYER — Gemeinsame Hintergrundebene
+ * ----------------------------------------------------------------------- */
+.bg-layer {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.bg-layer__grid {
+    position: absolute;
+    inset: 0;
+    opacity: 0.5;
+    transform: scale(1.5);
+    transform-origin: top;
+}
+
+.bg-layer__fade {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        to bottom,
+        transparent,
+        rgba(5, 5, 5, 0.8) 60%,
+        var(--bg-main)
+    );
+    z-index: 0;
+}
+
+.bg-layer__scanlines {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+/* -----------------------------------------------------------------------
+ * 🟡 PROJECT GOLDEN ART — Spezielle Amber-Farben
+ * ----------------------------------------------------------------------- */
+.hw-card--golden {
+    border-color: rgba(245, 158, 11, 0.2);
+}
+
+.hw-card--golden .hw-card__header {
+    background: rgba(0, 0, 0, 0.8);
+    border-color: rgba(120, 53, 15, 0.3);
+}
+
+.hw-card--golden:hover .hw-card__header {
+    background: rgba(69, 26, 3, 0.3);
+}
+
+.hw-card--golden .hw-card__title {
+    color: #f59e0b;             /* amber-500 */
+}
+
+.hw-card--golden .hw-card__item-icon {
+    color: #92400e;             /* amber-700 */
+}
+
+/* -----------------------------------------------------------------------
+ * 📜 DOSSIER STYLES — Spezifisch für die Akte
+ * ----------------------------------------------------------------------- */
+.dossier-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-2xl);
+}
+
+@media (min-width: 768px) {
+    .dossier-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.dossier-section h4 {
+    color: #fff;
+    border-bottom: 1px solid var(--border-subtle);
+    padding-bottom: var(--space-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    font-size: 0.875rem;
+    margin: 0 0 var(--space-md);
+}
+
+.dossier-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.dossier-list li {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.875rem;
+}
+
+.dossier-label {
+    color: var(--text-muted);
+}
+
+.dossier-value {
+    color: #fff;
+}
+
+.dossier-value--neon {
+    color: var(--color-neon-purple);
+}
+
+/* -----------------------------------------------------------------------
+ * 🫥 MISC UTILITIES — Verschiedene Hilfsklassen
+ * ----------------------------------------------------------------------- */
+
+/* Truncation */
+.truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Visually hidden but accessible */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+/* Neon Text Shadow */
+.text-neon {
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.5),
+                 0 0 20px rgba(0, 255, 255, 0.3);
+}
+
+/* Gradient Divider */
+.divider {
+    height: 1px;
+    background: linear-gradient(
+        to right,
+        transparent,
+        var(--border-subtle),
+        transparent
+    );
+    margin: var(--space-xl) 0;
+}
