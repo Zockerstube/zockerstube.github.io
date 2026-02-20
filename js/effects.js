@@ -125,12 +125,19 @@ const Effects = (() => {
         const spotlight = document.getElementById('spotlight');
         if (!spotlight) return;
 
+        let rafId = null;
+
         document.addEventListener('mousemove', (e) => {
-            const x = (e.clientX / window.innerWidth) * 100;
-            const y = (e.clientY / window.innerHeight) * 100;
-            spotlight.style.setProperty('--x', `${x}%`);
-            spotlight.style.setProperty('--y', `${y}%`);
-            spotlight.classList.add('is-active');
+            if (rafId) return;
+
+            rafId = requestAnimationFrame(() => {
+                const x = (e.clientX / window.innerWidth) * 100;
+                const y = (e.clientY / window.innerHeight) * 100;
+                spotlight.style.setProperty('--x', `${x}%`);
+                spotlight.style.setProperty('--y', `${y}%`);
+                spotlight.classList.add('is-active');
+                rafId = null;
+            });
         }, { passive: true });
     }
 

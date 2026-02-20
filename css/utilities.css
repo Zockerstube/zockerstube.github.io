@@ -32,6 +32,7 @@
     background-size: 40px 40px;
     perspective: 500px;
     transform-style: preserve-3d;
+    transform: translate3d(0,0,0);
     animation: grid-move 2s linear infinite;
     will-change: transform;
 }

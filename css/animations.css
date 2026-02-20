@@ -26,8 +26,8 @@
  * 🌊 GRID MOVE — Das Hintergrund-Gitter fährt nach unten
  * ----------------------------------------------------------------------- */
 @keyframes grid-move {
-    0%   { transform: translateY(0) scale(1.5) rotateX(12deg); }
-    100% { transform: translateY(40px) scale(1.5) rotateX(12deg); }
+    0%   { transform: translate3d(0, 0, 0) scale(1.5) rotateX(12deg); }
+    100% { transform: translate3d(0, 40px, 0) scale(1.5) rotateX(12deg); }
 }
 
 /* -----------------------------------------------------------------------
