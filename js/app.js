@@ -52,7 +52,6 @@
         // 2. Feature-Module
         GamesGrid.init();
         MusicWidget.init();
-        Terminal.init();
         Effects.init();
 
 
