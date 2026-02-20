@@ -132,9 +132,6 @@
  * ----------------------------------------------------------------------- */
 .hero-gradient-text {
     position: relative;
-    -webkit-text-fill-color: transparent;
-    -webkit-background-clip: text;
-    background-clip: text;
     background: linear-gradient(
         90deg,
         var(--color-neon-blue),
@@ -144,6 +141,9 @@
         var(--color-neon-blue)
     );
     background-size: 300% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
     animation: hero-gradient 6s linear infinite;
 }
 
