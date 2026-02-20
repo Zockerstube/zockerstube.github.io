@@ -80,13 +80,16 @@ const GamesGrid = (() => {
         card.setAttribute('data-reveal', '');
         card.setAttribute('aria-label', game.name);
 
-        const imgUrl = `https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/${game.id}/header.jpg`;
+        // Use .webp for modern compression, supported by Steam's fastly CDN
+        const imgUrl = `https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/${game.id}/header.webp`;
+        const fallbackUrl = `https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/${game.id}/header.jpg`;
 
         card.innerHTML = `
             <div class="tilt-card__inner">
                 <div class="tilt-card__bg">
                     <img src="${imgUrl}"
                          alt="${game.name} Cover"
+                         onerror="this.onerror=null;this.src='${fallbackUrl}';"
                          loading="lazy"
                          decoding="async"
                          width="460" height="215"
