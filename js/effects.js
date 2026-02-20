@@ -65,58 +65,6 @@ const Effects = (() => {
     /** Aktuell erwartete Taste */
     function konamiCode() { return KONAMI[konamiIndex]; }
 
-    /* ---------------------------------------------------------------
-     * 🐇 MATRIX RAIN
-     * --------------------------------------------------------------- */
-    let matrixInterval = null;
-
-    /**
-     * Matrix Rain starten
-     */
-    function startMatrix() {
-        const canvas = document.getElementById('matrix-canvas');
-        if (!canvas) return;
-
-        const ctx = canvas.getContext('2d');
-        canvas.style.display = 'block';
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-
-        const alphabet = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッン0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        const fontSize = 16;
-        const columns = Math.floor(canvas.width / fontSize);
-        const drops = new Array(columns).fill(1);
-
-        const draw = () => {
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = '#0F0';
-            ctx.font = `${fontSize}px monospace`;
-
-            for (let i = 0; i < drops.length; i++) {
-                const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
-                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-                    drops[i] = 0;
-                }
-                drops[i]++;
-            }
-        };
-
-        matrixInterval = setInterval(draw, 30);
-
-        // Exit Handler
-        const stop = () => {
-            clearInterval(matrixInterval);
-            canvas.style.display = 'none';
-            canvas.removeEventListener('click', stop);
-            document.removeEventListener('keydown', escHandler);
-        };
-        const escHandler = (e) => { if (e.key === 'Escape') stop(); };
-
-        canvas.addEventListener('click', stop);
-        document.addEventListener('keydown', escHandler);
-    }
 
     /* ---------------------------------------------------------------
      * 💡 CURSOR SPOTLIGHT
@@ -220,5 +168,5 @@ const Effects = (() => {
     }
 
     /* --- Öffentliche API --- */
-    return { init, startMatrix, acceptCookies };
+    return { init, acceptCookies };
 })();
